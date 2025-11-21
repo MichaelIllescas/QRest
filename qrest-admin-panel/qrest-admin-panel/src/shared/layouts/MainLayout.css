@@ -1,0 +1,42 @@
+/* MainLayout.css */
+.main-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f8fafc;
+  padding: 0;
+  margin: 0;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-wrapper {
+  flex: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .content-wrapper {
+    padding: 1rem;
+  }
+}
+
+/* Para navbar fijo */
+.main-layout.navbar-fixed .main-content {
+  padding-top: 64px; /* Altura del navbar */
+}
+
+@media (max-width: 768px) {
+  .main-layout.navbar-fixed .main-content {
+    padding-top: 56px; /* Altura del navbar móvil */
+  }
+}

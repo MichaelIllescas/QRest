@@ -1,16 +1,9 @@
-function App() {
-  return (
-    <div style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      height: '100vh',
-      fontSize: '3rem',
-      fontWeight: 'bold'
-    }}>
-      QRest
-    </div>
-  )
-}
+import React from 'react';
+import { AppRouter } from './shared/router/AppRouter';
+import './App.css';
 
-export default App
+const App: React.FC = () => {
+  return <AppRouter />;
+};
+
+export default App;
