@@ -1,185 +1,191 @@
-# Arquitectura Backend — QRest (Hexagonal + Módulos DDD + Shared)
 
-Este documento describe la arquitectura definitiva del backend de **QRest**, organizada mediante **Arquitectura Hexagonal**, **Domain-Driven Design (DDD)** y un módulo **shared** para funcionalidad transversal.
-
----
-
-#  Índice
-
-- [1. Visión General](#1-visión-general)
-- [2. Principios Arquitectónicos](#2-principios-arquitectónicos)
-- [3. Módulos DDD del Backend](#3-módulos-ddd-del-backend)
-- [4. Shared Module](#4-shared-module)
-- [5. Estructura de Carpetas Completa](#5-estructura-de-carpetas-completa)
-- [6. Relación entre Módulos (Mermaid)](#6-relación-entre-módulos-mermaid)
-- [7. Flujo Interno Hexagonal (Mermaid)](#7-flujo-interno-hexagonal-mermaid)
-- [8. Ventajas de Esta Arquitectura](#8-ventajas-de-esta-arquitectura)
+# Arquitectura Backend QRest — Clean Architecture + Hexagonal + DDD  
+## Documento Oficial Inicial
 
 ---
 
-# 1. Visión General
+# Índice
 
-El backend de QRest está construido sobre:
-
-- **Spring Boot**
-- **Arquitectura Hexagonal (Ports & Adapters)**
-- **DDD aplicado por módulos**
-- **Base de datos SQLite**
-- **WebSocket y REST API**
-
-Cada módulo se organiza en **domain**, **application** e **infrastructure**, asegurando alta cohesión y bajo acoplamiento.
-
----
-
-# 2. Principios Arquitectónicos
-
-✔ Separación clara entre:
-- **Dominio** (reglas del negocio)
-- **Aplicación** (casos de uso)
-- **Infraestructura** (REST, WS, JPA, configuración)
-
-✔ Los módulos NO dependen directamente entre sí  
-✔ El módulo `shared` provee utilidades comunes  
-✔ Las reglas del dominio permanecen puras (sin dependencias de framework)
+1. [Introducción](#introducción)  
+2. [Principios Arquitectónicos](#principios-arquitectónicos)  
+3. [Dominio y DDD](#dominio-y-ddd)  
+4. [Módulos del Backend](#módulos-del-backend)  
+5. [Capas de la Arquitectura](#capas-de-la-arquitectura)  
+   - 5.1 [Domain](#51-domain)  
+   - 5.2 [Application](#52-application)  
+   - 5.3 [Infrastructure](#53-infrastructure)  
+6. [Estructura de Carpetas por Módulo](#estructura-de-carpetas-por-módulo)  
+7. [Módulo Shared](#módulo-shared)  
+8. [WebSocket y Comunicación en Tiempo Real](#websocket-y-comunicación-en-tiempo-real)  
+9. [Reglas de Dependencias](#reglas-de-dependencias)  
+10. [Consideraciones Finales](#consideraciones-finales)
 
 ---
 
-# 3. Módulos DDD del Backend
+# Introducción
 
-| Módulo | Responsabilidad |
-|--------|------------------|
-| **products** | Gestión de productos e imágenes |
-| **categories** | Categorías del menú |
-| **orders** | Pedidos, ítems y estados |
-| **mesas** | Mesas + Códigos QR |
-| **reports** | Reportes del sistema |
-| **config** | Configuración del restaurante |
-| **users** | Usuarios internos y roles |
+El backend de **QRest** se implementa como un **Monolito Modular**, siguiendo tres pilares fundamentales:
+
+- **Clean Architecture**  
+- **Arquitectura Hexagonal (Ports & Adapters)**  
+- **Domain‑Driven Design (DDD)**  
+
+Con este enfoque, cada módulo representa un **bounded context** independiente, con su propio dominio, casos de uso y adaptadores.
 
 ---
 
-# 4. Shared Module
+# Principios Arquitectónicos
 
-El módulo `shared` contiene toda la funcionalidad transversal:
+- **Independencia del dominio**: no depende de frameworks ni tecnología.
+- **Separación clara de responsabilidades**: domain → application → infrastructure.
+- **DTO y mappers solo en infrastructure**.
+- **Controllers ubicados en `in/` dentro de infrastructure**(estilo propio).
+- **Casos de uso implementados como `services` en application**.
+- **Infraestructura global ubicada en `shared/config`**.
+- **Soporte nativo para REST + WebSocket**.
+- **Módulos completamente aislados** según DDD.
 
-```text
+---
+
+# Dominio y DDD
+
+En QRest se aplica **Domain‑Driven Design** para modelar el negocio:
+
+- Cada módulo representa un **bounded context**.
+- El dominio contiene:
+  - Entidades
+  - Agregados
+  - Value Objects
+  - Servicios de dominio (si los requiere)
+  - Excepciones específicas del módulo
+- Las reglas del negocio residen únicamente en el dominio.
+- La comunicación entre módulos se realiza vía **ports OUT**, nunca por referencias directas.
+
+---
+
+# Módulos del Backend
+
+- `products`  
+- `categories`  
+- `orders`  
+- `mesas`  
+- `reports`  
+- `config`  
+- `users`  
+- `shared` (transversal)
+
+Cada uno con su propio dominio, application e infraestructura.
+
+---
+
+# Capas de la Arquitectura
+
+## 5.1 Domain
+- Modelo de dominio completamente puro.
+- No usa DTOs ni entidades JPA.
+- No conoce Spring.
+- Contiene la lógica del negocio y las reglas del sistema.
+
+## 5.2 Application
+- Capa de casos de uso.
+- Contiene:
+  - Ports IN (interfaces de casos de uso)
+  - Ports OUT (interfaces para repositorios, lookup, emisores de eventos)
+  - Services (implementaciones de los casos de uso)
+- Es la capa que orquesta el flujo entre dominio e infraestructura.
+
+## 5.3 Infrastructure
+- Implementación de adaptadores externos:
+  - **web/in** → controllers REST  
+  - **web/dto** → DTO de request/response  
+  - **persistence/entity** → entidades JPA  
+  - **persistence/repository** → implementaciones de puertos OUT  
+  - **websocket** → canales y publicadores  
+  - **mapper** → conversiones  
+
+
+---
+
+# Estructura de Carpetas por Módulo
+
+Ejemplo estándar:
+
+```
+módulo/
+ ├── domain/
+ │    ├── model/
+ │    ├── service/
+ │    └── exception/
+ │
+ ├── application/
+ │    ├── ports/
+ │    │    ├── in/
+ │    │    └── out/
+ │    └── service/         # implementaciones de casos de uso
+ │
+ └── infrastructure/
+      ├── web/
+      │    ├── in/         # controllers
+      │    └── dto/
+      ├── persistence/
+      │    ├── entity/
+      │    └── repository/
+      ├── websocket/       # solo módulos que lo necesitan
+      ├── mapper/
+      └── config/          # si es configuración específica del módulo
+```
+
+---
+
+# Módulo Shared
+
+Infraestructura transversal totalmente independiente de los módulos de negocio:
+
+```
 shared/
- ├── config/        # Configuración Spring Boot
- ├── exception/     # Manejo global de errores
- ├── util/          # Utilidades comunes
- ├── security/      # Seguridad (Basic / JWT)
- └── websocket/     # Publicación de eventos WebSocket
+ ├── config/
+ │     ├── security/
+ │     ├── datasource/
+ │     ├── websocket/
+ │     ├── cors/
+ │     └── jackson/
+ ├── exception/
+ ├── util/
+ └── mapper/
 ```
 
----
-
-# 5. Estructura de Carpetas Completa
-
-```text
-src/main/java/com/qrest/
-    ├── shared/
-    │   ├── config/
-    │   ├── exception/
-    │   ├── util/
-    │   ├── security/
-    │   └── websocket/
-    │
-    ├── products/
-    │   ├── domain/
-    │   │   ├── model/
-    │   │   └── port/
-    │   │       ├── in/
-    │   │       └── out/
-    │   ├── application/
-    │   │   ├── dto/
-    │   │   ├── mapper/
-    │   │   └── service/
-    │   └── infrastructure/
-    │       ├── adapter/
-    │       │   ├── in/rest/
-    │       │   └── out/persistence/
-    │       └── repository/
-    │
-    ├── orders/
-    │   ├── domain/
-    │   │   ├── model/
-    │   │   └── port/
-    │   │       ├── in/
-    │   │       └── out/
-    │   ├── application/
-    │   │   ├── dto/
-    │   │   ├── mapper/
-    │   │   └── service/
-    │   └── infrastructure/
-    │       ├── adapter/
-    │       │   ├── in/rest/
-    │       │   ├── in/websocket/
-    │       │   └── out/persistence/
-    │       └── repository/
-    │
-    ├── mesas/
-    ├── reports/
-    ├── config/
-    ├── users/
-    │     (todos con la misma estructura de domain / application / infrastructure)
-    │
-    └── QRestApplication.java
-```
+Aquí se ubican configuraciones globales como:
+- Seguridad
+- CORS
+- WebSocket global
+- Conexión a SQLite
+- Configuración global de Jackson
 
 ---
 
-# 6. Relación entre Módulos (Mermaid)
+# WebSocket y Comunicación en Tiempo Real
 
-```mermaid
-flowchart LR
-
-    products --> shared
-    categories --> shared
-    orders --> shared
-    mesas --> shared
-    reports --> shared
-    config --> shared
-    users --> shared
-
-    orders --> products
-    products --> categories
-    mesas --> orders
-```
+- Utilizado principalmente en `orders` y `mesas`.
+- Expone canales para:
+  - pedidos nuevos
+  - cambios de estado
+  - limpieza de historial de mesas
+- Implementaciones en `infrastructure/websocket`.
+- La capa de application desconoce WebSocket y solo llama a puertos OUT.
 
 ---
 
-# 7. Flujo Interno Hexagonal (Mermaid)
+# Reglas de Dependencias
 
-```mermaid
-flowchart LR
-
-    Client[Client] -->|HTTP/WS| AdapterIn
-
-    AdapterIn[Adapter IN - REST/WS] --> UseCase
-
-    UseCase[Application Service] --> InPort
-
-    InPort[Port IN] --> ServiceImpl
-
-    ServiceImpl[Service Impl] --> OutPort
-
-    OutPort[Port OUT] --> AdapterOut
-
-    AdapterOut[Adapter OUT - Persistence] --> JpaRepo
-
-    JpaRepo[JPA Repository] --> DB[(SQLite)]
-```
+- **Domain** → no depende de nada.  
+- **Application** → depende solo de domain.  
+- **Infrastructure** → depende de application y domain.  
+- **Shared/config** → contiene infraestructura técnica global.  
+- **Los módulos nunca se llaman entre sí directamente**: la comunicación es vía **ports OUT**.
 
 ---
 
-# 8. Ventajas de Esta Arquitectura
+# Consideraciones Finales
 
-- ✔ Modular, clara y escalable  
-- ✔ Testeable (dominio aislado)  
-- ✔ Fácil de mantener  
-- ✔ Coherente con los ADR y el modelo de datos  
-- ✔ Permite agregar nuevos módulos sin romper los existentes  
-- ✔ Código ordenado por contexto de negocio
-
----
-
+Esta arquitectura representa el estándar base de QRest, unificando Clean Architecture, Hexagonal y DDD en un diseño modular, escalable y orientado al dominio.  
+Cada módulo es autónomo, mantiene su propio ciclo de evolución y permite extender el sistema sin comprometer la estabilidad del backend.
