@@ -138,7 +138,7 @@ Carpeta con todas las historias:
 
 ## 📋 Resumen de documentación disponible
 
-- **51 Historias de Usuario** completamente detalladas
+- **52 Historias de Usuario** completamente detalladas
 - **7 ADR** (Architecture Decision Records) con decisiones técnicas
 - **Arquitectura completa** frontend y backend documentada
 - **Convenciones obligatorias** para desarrollo consistente
