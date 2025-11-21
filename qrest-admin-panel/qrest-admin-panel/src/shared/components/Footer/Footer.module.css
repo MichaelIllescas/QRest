@@ -1,0 +1,97 @@
+.footer {
+  width: 100%;
+  background: #111827;
+  color: #e5e7eb;
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.inner {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  gap: 1.5rem;
+}
+
+/* ─── Variantes de tamaño ─────────────────────────── */
+
+.small {
+  padding: 1rem;
+  font-size: 0.85rem;
+}
+
+.medium {
+  padding: 1.5rem;
+  font-size: 1rem;
+}
+
+.large {
+  padding: 2rem;
+  font-size: 1.1rem;
+}
+
+/* ─── Secciones ───────────────────────────────────── */
+
+.sections {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.5rem;
+}
+
+.sectionTitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #9ca3af;
+}
+
+.linksList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.link {
+  color: #e5e7eb;
+  text-decoration: none;
+  opacity: 0.85;
+  transition: opacity 0.2s ease;
+}
+
+.link:hover {
+  opacity: 1;
+}
+
+.customContent {
+  margin-top: 0.5rem;
+}
+
+/* Children ubicados debajo de las secciones */
+.childrenArea {
+  margin-top: 1rem;
+}
+
+/* Divider inferior */
+.divider {
+  width: 100%;
+  height: 1px;
+  background: rgba(148, 163, 184, 0.2);
+  margin-top: 1rem;
+}
+
+/* Franja inferior */
+.bottomBar {
+  margin-top: 1rem;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.85rem;
+}
+
+/* Responsivo */
+@media (max-width: 600px) {
+  .sections {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,277 @@
+/* Clases estándar para layout de páginas */
+
+/* Container principal de la página */
+.page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Sección de título estandarizada */
+.page-header {
+  width: 100%;
+  max-width: 1200px;
+  min-height: 120px;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  box-sizing: border-box;
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  background-color: #f9fafb;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Área de contenido estandarizada */
+.page-content {
+  width: 100%;
+  max-width: 1200px;
+  min-height: 600px;
+  padding: 2rem;
+  box-sizing: border-box;
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  background-color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* ================================ */
+/* SISTEMA DE CONTROL DE BORDES     */
+/* ================================ */
+
+/* Clase para ocultar bordes - Aplicar al body o container padre */
+.no-layout-borders .page-header,
+.no-layout-borders .page-content {
+  border: 1px solid #e5e7eb;
+  border-style: solid;
+}
+
+/* Versión de producción - sin bordes punteados */
+.page-header.production,
+.page-content.production {
+  border: 1px solid #e5e7eb;
+  border-style: solid;
+}
+
+/* Versión de desarrollo - bordes más visibles */
+.page-header.development {
+  border: 3px dashed #3b82f6;
+  background-color: #eff6ff;
+}
+
+.page-content.development {
+  border: 3px dashed #10b981;
+}
+
+/* Modo sin bordes - completamente limpio */
+.page-header.clean,
+.page-content.clean {
+  border: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Aplicar globalmente - agregar al body */
+body.development-mode .page-header {
+  border: 3px dashed #3b82f6 !important;
+  background-color: #eff6ff;
+}
+
+body.development-mode .page-content {
+  border: 3px dashed #10b981 !important;
+}
+
+body.production-mode .page-header,
+body.production-mode .page-content {
+  border: 1px solid #e5e7eb !important;
+  border-style: solid !important;
+}
+
+body.clean-mode .page-header,
+body.clean-mode .page-content {
+  border: none !important;
+}
+
+/* Título principal */
+.page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.2;
+}
+
+/* Descripción del título */
+.page-description {
+  font-size: 1rem;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Estado placeholder para contenido */
+.content-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 500px;
+  text-align: center;
+  color: #9ca3af;
+}
+
+.placeholder-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.placeholder-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.8;
+}
+
+.placeholder-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 0.5rem 0;
+}
+
+.placeholder-text {
+  font-size: 1rem;
+  margin: 0;
+  max-width: 400px;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .page-container {
+    max-width: 100%;
+    padding: 1rem;
+  }
+  
+  .page-header,
+  .page-content {
+    max-width: 100%;
+  }
+  
+  .page-header {
+    min-height: 100px;
+    padding: 1.25rem;
+  }
+  
+  .page-content {
+    padding: 1.5rem;
+    min-height: 500px;
+  }
+  
+  .page-title {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-container {
+    padding: 0.75rem;
+  }
+  
+  .page-header {
+    min-height: 80px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .page-content {
+    padding: 1.25rem;
+    min-height: 400px;
+  }
+  
+  .page-title {
+    font-size: 1.5rem;
+  }
+  
+  .page-description {
+    font-size: 0.9rem;
+  }
+  
+  .placeholder-icon {
+    font-size: 3rem;
+  }
+  
+  .placeholder-title {
+    font-size: 1.25rem;
+  }
+  
+  .placeholder-text {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-container {
+    padding: 0.5rem;
+  }
+  
+  .page-header {
+    min-height: 70px;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  
+  .page-content {
+    padding: 1rem;
+    min-height: 350px;
+  }
+  
+  .page-title {
+    font-size: 1.25rem;
+  }
+  
+  .page-description {
+    font-size: 0.85rem;
+  }
+  
+  .placeholder-icon {
+    font-size: 2.5rem;
+  }
+  
+  .placeholder-title {
+    font-size: 1.125rem;
+  }
+  
+  .placeholder-text {
+    font-size: 0.85rem;
+  }
+}
+
+/* Variantes de bordes para desarrollo/producción */
+.page-header.production,
+.page-content.production {
+  border: 1px solid #e5e7eb;
+  border-style: solid;
+}
+
+.page-header.development {
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+}
+
+.page-content.development {
+  border-color: #10b981;
+}
+
+/* Estados hover para interactividad */
+.page-content:hover {
+  border-color: #9ca3af;
+  transition: border-color 0.2s ease;
+}
+
+.page-header:hover {
+  border-color: #9ca3af;
+  transition: border-color 0.2s ease;
+}

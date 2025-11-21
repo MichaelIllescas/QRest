@@ -1,0 +1,445 @@
+/* Variables CSS - Diseño profesional */
+.navbar {
+  --text-color: #374151;
+  --hover-color: #2563eb;
+  --active-color: #1d4ed8;
+  --border-color: #e5e7eb;
+  --background-color: #ffffff;
+  --transition-duration: 0.2s;
+  --navbar-height: 64px;
+  --mobile-navbar-height: 56px;
+}
+
+/* Navbar principal */
+.navbar {
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  background: var(--background-color);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all var(--transition-duration) ease;
+}
+
+.navbar.fixed {
+  position: fixed;
+}
+
+/* Container del navbar */
+.navContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--navbar-height);
+}
+
+/* Brand/Logo */
+.navBrand {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.brandLink {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--text-color);
+  font-weight: 600;
+  font-size: 1.25rem;
+  transition: color var(--transition-duration) ease;
+}
+
+.brandLink:hover {
+  color: var(--hover-color);
+}
+
+.logo {
+  height: 40px;
+  width: auto;
+  margin-right: 0.75rem;
+  object-fit: contain;
+}
+
+.brandText {
+  white-space: nowrap;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Desktop Navigation */
+.navLinks {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.navExtra {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  margin-right: 1rem;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  color: var(--text-color);
+  border-radius: 6px;
+  transition: all var(--transition-duration) ease;
+  white-space: nowrap;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.navLink:hover {
+  color: var(--hover-color);
+  background-color: rgba(37, 99, 235, 0.1);
+}
+
+.navLink.active {
+  color: var(--active-color);
+  background-color: rgba(37, 99, 235, 0.15);
+  font-weight: 600;
+}
+
+/* Dropdown */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdownToggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: none;
+  border: none;
+  color: var(--text-color);
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all var(--transition-duration) ease;
+  font-weight: 500;
+  font-size: 0.875rem;
+  font-family: inherit;
+}
+
+.dropdownToggle:hover {
+  color: var(--hover-color);
+  background-color: rgba(37, 99, 235, 0.1);
+}
+
+.dropdownArrow {
+  margin-left: 0.25rem;
+  font-size: 0.7rem;
+  transition: transform var(--transition-duration) ease;
+}
+
+.dropdownArrow.open {
+  transform: rotate(180deg);
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 180px;
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1001;
+  padding: 0.5rem;
+  overflow: hidden;
+}
+
+.dropdownLink {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  text-decoration: none;
+  color: var(--text-color);
+  transition: all var(--transition-duration) ease;
+  border-radius: 6px;
+  margin: 0.125rem 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.dropdownLink:hover {
+  color: var(--hover-color);
+  background-color: rgba(37, 99, 235, 0.1);
+}
+
+.dropdownLink.active {
+  color: var(--active-color);
+  background-color: rgba(37, 99, 235, 0.15);
+  font-weight: 600;
+}
+
+/* Iconos */
+.iconEmoji {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.iconSvg svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+.iconComponent {
+  display: flex;
+  align-items: center;
+}
+
+.iconText {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.linkText {
+  line-height: 1.2;
+  font-weight: inherit;
+}
+
+/* Mobile Menu Button */
+.mobileMenuButton {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  padding: 0;
+  border-radius: 6px;
+  transition: all var(--transition-duration) ease;
+}
+
+.mobileMenuButton:hover {
+  background-color: rgba(55, 65, 81, 0.05);
+  border-color: var(--hover-color);
+}
+
+.mobileMenuButton.open {
+  background-color: var(--hover-color);
+  border-color: var(--hover-color);
+}
+
+.hamburgerLine {
+  width: 20px;
+  height: 2px;
+  background: var(--text-color);
+  margin: 2px 0;
+  transition: all var(--transition-duration) ease;
+  border-radius: 2px;
+}
+
+.mobileMenuButton.open .hamburgerLine {
+  background: white;
+}
+
+.mobileMenuButton.open .hamburgerLine:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.mobileMenuButton.open .hamburgerLine:nth-child(2) {
+  opacity: 0;
+}
+
+.mobileMenuButton.open .hamburgerLine:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* Mobile Navigation */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-duration) ease;
+}
+
+.overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mobileNav {
+  display: none;
+  flex-direction: column;
+  padding: 1rem;
+  background: var(--background-color);
+  border-top: 1px solid var(--border-color);
+}
+
+.mobileNavLink {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  text-decoration: none;
+  color: var(--text-color);
+  border-radius: 6px;
+  transition: all var(--transition-duration) ease;
+  margin: 0.125rem 0;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.mobileNavLink:hover {
+  color: var(--hover-color);
+  background-color: rgba(37, 99, 235, 0.1);
+}
+
+.mobileNavLink.active {
+  color: var(--active-color);
+  background-color: rgba(37, 99, 235, 0.15);
+  font-weight: 600;
+}
+
+/* Mobile Dropdown */
+.mobileDropdown {
+  margin: 0.125rem 0;
+}
+
+.mobileDropdownToggle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  color: var(--text-color);
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all var(--transition-duration) ease;
+  width: 100%;
+  text-align: left;
+  font-weight: 500;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.mobileDropdownToggle:hover {
+  color: var(--hover-color);
+  background-color: rgba(37, 99, 235, 0.1);
+}
+
+.mobileDropdownMenu {
+  padding: 0.5rem 0 0.5rem 1.5rem;
+  margin-top: 0.25rem;
+}
+
+.mobileDropdownLink {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  color: var(--text-color);
+  border-radius: 6px;
+  transition: all var(--transition-duration) ease;
+  margin: 0.125rem 0;
+  font-size: 0.875rem;
+}
+
+.mobileDropdownLink:hover {
+  color: var(--hover-color);
+  background-color: rgba(37, 99, 235, 0.1);
+}
+
+.mobileDropdownLink.active {
+  color: var(--active-color);
+  background-color: rgba(37, 99, 235, 0.15);
+  font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .navLinks {
+    display: none;
+  }
+  
+  .mobileMenuButton {
+    display: flex;
+  }
+  
+  .mobileNav {
+    display: flex;
+  }
+  
+  .navContainer {
+    padding: 0 1rem;
+    height: var(--mobile-navbar-height);
+  }
+  
+  .navExtra {
+    margin-left: auto;
+    margin-right: 0.5rem;
+  }
+  
+  .brandText {
+    font-size: 1.125rem;
+  }
+  
+  .logo {
+    height: 36px;
+  }
+}
+
+/* Focus states */
+.navLink:focus,
+.dropdownToggle:focus,
+.mobileNavLink:focus,
+.mobileDropdownToggle:focus,
+.mobileMenuButton:focus,
+.brandLink:focus {
+  outline: 2px solid var(--hover-color);
+  outline-offset: 2px;
+}
+
+/* Dark theme */
+.navbar.dark {
+  --text-color: #f9fafb;
+  --hover-color: #60a5fa;
+  --active-color: #3b82f6;
+  --border-color: #374151;
+  --background-color: #1f2937;
+}
+
+/* Spacing for fixed navbar */
+.navbar.fixed + * {
+  margin-top: var(--navbar-height);
+}
+
+@media (max-width: 768px) {
+  .navbar.fixed + * {
+    margin-top: var(--mobile-navbar-height);
+  }
+}
+
+/* Global body adjustment when using fixed navbar */
+body:has(.navbar.fixed) {
+  padding-top: var(--navbar-height);
+}
+
+@media (max-width: 768px) {
+  body:has(.navbar.fixed) {
+    padding-top: var(--mobile-navbar-height);
+  }
+}
