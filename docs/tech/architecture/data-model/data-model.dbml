@@ -1,0 +1,85 @@
+
+Table categoria {
+  id_categoria bigint [pk]
+  nombre varchar
+  activa boolean
+}
+
+Table producto {
+  id_producto bigint [pk]
+  id_categoria bigint [ref: > categoria.id_categoria]
+  nombre varchar
+  descripcion varchar
+  precio decimal
+  disponible boolean
+  imagen_url varchar
+}
+
+Table mesa {
+  id_mesa bigint [pk]
+  numero_mesa int
+  codigo_qr_url varchar
+  fecha_ultima_regeneracion datetime
+}
+
+Table pedido {
+  id_pedido bigint [pk]
+  id_mesa bigint [ref: > mesa.id_mesa]
+  monto_total decimal
+  estado_actual varchar
+  fecha_creacion datetime
+  fecha_ultima_actualizacion datetime
+}
+
+Table pedido_item {
+  id_item bigint [pk]
+  id_pedido bigint [ref: > pedido.id_pedido]
+  id_producto bigint [ref: > producto.id_producto]
+  nombre_producto varchar
+  precio_unitario decimal
+  cantidad int
+  subtotal decimal
+}
+
+Table pedido_estado_historial {
+  id_historial bigint [pk]
+  id_pedido bigint [ref: > pedido.id_pedido]
+  estado_anterior varchar
+  estado_nuevo varchar
+  fecha_cambio datetime
+  usuario_responsable varchar
+}
+
+Table configuracion_sistema {
+  id_config bigint [pk]
+  nombre_restaurante varchar
+  logo_url varchar
+  telefono varchar
+  direccion varchar
+  horarios varchar
+  color_fondo varchar
+  color_texto varchar
+  color_botones varchar
+  tema varchar
+  wifi_ssid varchar
+  wifi_password_encriptado varchar
+  wifi_tipo_seguridad varchar
+}
+
+Table usuario {
+  id_usuario bigint [pk]
+  username varchar
+  password_encriptado varchar
+  nombre varchar
+  activo boolean
+}
+
+Table rol {
+  id_rol bigint [pk]
+  nombre_rol varchar
+}
+
+Table usuario_rol {
+  id_usuario bigint [ref: > usuario.id_usuario]
+  id_rol bigint [ref: > rol.id_rol]
+}
