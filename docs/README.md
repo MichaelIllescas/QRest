@@ -1,11 +1,11 @@
-# 📘 Documentación del Proyecto — QRest (Carta Interactiva QR)
+#  Documentación del Proyecto — QRest (Carta Interactiva QR)
 
 > Este documento actúa como índice maestro de toda la documentación ubicada en la carpeta `docs/`.  
-> Ahora incluye **anclas corregidas y enlaces funcionales** compatibles con GitHub, VSCode, Obsidian y cualquier visor Markdown.
+
 
 ---
 
-# 📑 Índice
+#  Índice
 
 - [1. Documentación de Producto](#1-documentación-de-producto)
   - [1.1 Archivos principales](#11-archivos-principales)
@@ -36,7 +36,7 @@
 
 Carpeta con todas las historias:
 
-👉 [`/product/user-stories/`](./product/user-stories/)
+➡ [`/product/user-stories/`](./product/user-stories/)
 
 ---
 
