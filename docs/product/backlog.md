@@ -46,7 +46,7 @@ Cada historia tiene su documento individual dentro de:
 [Ver documento](./user-stories/US-011-ver-historial-pedidos.md)
 
 ## US-012 — Consultar historial desde backend
-[Ver documento](./user-stories/US-012-consultar-historial-backend.md)
+[Ver documento](./user-stories/US-012-historial-persistencia.md)
 
 ## US-013 — Cancelar pedido pendiente
 [Ver documento](./user-stories/US-013-cancelar-pedido-pendiente.md)
@@ -111,6 +111,9 @@ Cada historia tiene su documento individual dentro de:
 ## US-048 — Eliminar categoría
 [Ver documento](./user-stories/US-048-eliminar-categoria.md)
 
+## US-052 — Ver categorías
+[Ver documento](./user-stories/US-052-ver-categorias.md)
+
 ---
 
 # 📌 ÉPICO 6 — Mesas y Códigos QR
@@ -118,8 +121,8 @@ Cada historia tiene su documento individual dentro de:
 ## US-029 — Registrar mesa
 [Ver documento](./user-stories/US-029-registrar-mesa.md)
 
-## US-030 — Generar QR para una mesa (versión corregida)
-[Ver documento](./user-stories/US-030-generar-qr-corregido.md)
+## US-030 — Generar QR para una mesa 
+[Ver documento](./user-stories/US-030-generar-qr.md)
 
 ## US-031 — Regenerar QR si cambia la configuración
 [Ver documento](./user-stories/US-031-regenerar-qr.md)
@@ -201,7 +204,7 @@ Cada historia tiene su documento individual dentro de:
 
 # 🧩 Resumen general del backlog
 
-- 51 historias de usuario  
+- 52 historias de usuario  
 - Divididas en 10 épicos  
 - Todas refinadas, pequeñas y listas para implementación  
 - Todas con archivo individual enlazado  
