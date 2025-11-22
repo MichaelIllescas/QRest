@@ -149,6 +149,7 @@ Este documento lista todas las entidades JPA y sus DTOs correspondientes, indica
 ## CategoryDTO
 - id : Long
 - name : String **(requerido)**
+- active : boolean **(requerido)**
 
 ---
 
