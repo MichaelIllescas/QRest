@@ -3,12 +3,25 @@ import Container from "../shared/components/Container";
 import "../shared/styles/PageLayout.css";
 import RegisterCategoryForm from "../features/categories/components/RegisterCategoryForm";
 import { Table } from "../shared/components/Table/Table";
+import type { TableColumn } from "../shared/components/Table/table.types";
 import type { Category } from "../features/categories/types/category";
 import { useListCategory } from "../features/categories/hooks/useListCategory";
+import { AlertModal } from "../shared/components/Alert/AlertModal";
+import { useDeleteCategory } from "../features/categories/hooks/useDeleteCategory";
+import { Alert } from "../shared/components/Alert/Alert";
 
 const Categories: React.FC = () => {
   const [formRegisterOpen, setFormRegisterOpen] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState<number | null>(null);
+  
   const { categories, loading, error, setError, listCategory } = useListCategory();
+  const { 
+    deleteCategory, 
+    loading: deleteLoading, 
+    error: deleteError, 
+    deleted,
+    setError: setDeleteError 
+  } = useDeleteCategory();
 
   const columns: TableColumn<Category>[] = [
     { key: "id", label: "ID" },
@@ -16,12 +29,18 @@ const Categories: React.FC = () => {
     {
       key: "active",
       label: "Activa",
-      render: (value: boolean) => (value ? "Sí" : "No"),
+      render: (value) => (value ? "Sí" : "No"),
     },
+  ];
+  const mockCategories: Category[] = [
+    { id: 1, name: "Entrantes",  active: true },
+    { id: 2, name: "Platos Principales", active: true },
+    { id: 3, name: "Postres", active: false },
   ];
 
   useEffect(() => {
     listCategory();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -52,11 +71,35 @@ const Categories: React.FC = () => {
             </button>
           </div>
 
-          {/* Mostrar error */}
+          {/* Mostrar error de listado */}
           {error && (
             <div className="error-message">
               <strong>Error:</strong> {error.message}
             </div>
+          )}
+
+          {/* Mostrar error de eliminación */}
+          {deleteError && (
+            <Alert
+              variant="error"
+              title="Error al Eliminar la categoría"
+              closable
+              onClose={() => setDeleteError(null)}
+            >
+              {deleteError.message}
+            </Alert>
+          )}
+
+          {/* Mostrar éxito de eliminación */}
+          {deleted && (
+            <Alert
+              variant="success"
+              title="Categoría Eliminada"
+              closable
+              onClose={() => listCategory()}
+            >
+              La categoría ha sido eliminada exitosamente.
+            </Alert>
           )}
 
           {/* Mostrar loading */}
@@ -68,17 +111,23 @@ const Categories: React.FC = () => {
 
           {/* Mostrar tabla siempre que no esté el formulario abierto */}
           {!formRegisterOpen && !loading && (
-            <Table
+            <Table<Category>
               columns={columns}
               data={categories}
               mode="full"
               variant="compact"
               itemsPerPage={4}
               title="Listado de Categorías"
-              actions={(_row: Category) => (
+              actions={(row: Category) => (
                 <>
                   <button className="btn btn-secondary">📝</button>
-                  <button className="btn btn-danger">🗑️</button>
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => setCategoryToDelete(row.id!)}
+                    disabled={deleteLoading}
+                  >
+                    🗑️
+                  </button>
                 </>
               )}
             ></Table>
@@ -86,6 +135,27 @@ const Categories: React.FC = () => {
           {formRegisterOpen && <RegisterCategoryForm />}
         </div>
       </div>
+
+      <AlertModal
+        title="Eliminar Categoría"
+        variant="error"
+        isOpen={categoryToDelete !== null}
+        onClose={() => {
+          setCategoryToDelete(null);
+          setDeleteError(null);
+        }}
+        onConfirm={async () => {
+          if (categoryToDelete !== null) {
+            await deleteCategory(categoryToDelete);
+            setCategoryToDelete(null);
+            listCategory();
+          }
+        }}
+        showCancelButton
+        confirmText={deleteLoading ? "Eliminando..." : "Eliminar"}
+      >
+        ¿Estás seguro de que deseas eliminar esta categoría?
+      </AlertModal>
     </Container>
   );
 };
