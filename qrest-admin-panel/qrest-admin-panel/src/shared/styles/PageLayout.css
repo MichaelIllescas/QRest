@@ -94,6 +94,21 @@ body.clean-mode .page-content {
   border: none !important;
 }
 
+/* Mensajes de estado */
+.loading-message {
+  text-align: center;
+  padding: 2rem;
+}
+
+.error-message {
+  padding: 1rem;
+  background-color: #fee;
+  border: 1px solid #fcc;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  color: #c33;
+}
+
 /* Título principal */
 .page-title {
   font-size: 2rem;
