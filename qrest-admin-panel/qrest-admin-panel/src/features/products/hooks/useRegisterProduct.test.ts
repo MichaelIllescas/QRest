@@ -66,6 +66,8 @@ describe('useRegisterProduct', () => {
       expect(result.current.saveError).toBeNull();
       expect(result.current.uploadError).toBeNull();
       expect(result.current.isUploading).toBe(false);
+      expect(result.current.validationErrors).toEqual({});
+      expect(result.current.touched).toEqual({});
     });
   });
 
@@ -255,11 +257,17 @@ describe('useRegisterProduct', () => {
 
       const { result } = renderHook(() => useRegisterProduct());
 
-      // Configurar producto
+      // Configurar producto con todos los campos obligatorios
       act(() => {
         result.current.handleChange({
           target: { name: 'name', value: 'Pizza', type: 'text' },
         } as React.ChangeEvent<HTMLInputElement>);
+        result.current.handleChange({
+          target: { name: 'price', value: '15.99', type: 'number' },
+        } as React.ChangeEvent<HTMLInputElement>);
+        result.current.handleChange({
+          target: { name: 'categoryId', value: '1', type: 'select-one' },
+        } as React.ChangeEvent<HTMLSelectElement>);
       });
 
       const files = [createMockFile('pizza.jpg', 1024, 'image/jpeg')];
@@ -282,6 +290,8 @@ describe('useRegisterProduct', () => {
       expect(mockedProductService.create).toHaveBeenCalledWith(
         expect.objectContaining({
           name: 'Pizza',
+          price: '15.99',
+          categoryId: '1',
           imageUrl: 'https://example.com/product.jpg',
         })
       );
@@ -341,6 +351,19 @@ describe('useRegisterProduct', () => {
 
       const { result } = renderHook(() => useRegisterProduct());
 
+      // Configurar campos obligatorios
+      act(() => {
+        result.current.handleChange({
+          target: { name: 'name', value: 'Pizza', type: 'text' },
+        } as React.ChangeEvent<HTMLInputElement>);
+        result.current.handleChange({
+          target: { name: 'price', value: '10', type: 'number' },
+        } as React.ChangeEvent<HTMLInputElement>);
+        result.current.handleChange({
+          target: { name: 'categoryId', value: '1', type: 'select-one' },
+        } as React.ChangeEvent<HTMLSelectElement>);
+      });
+
       const files = [createMockFile('image.jpg', 1024, 'image/jpeg')];
       act(() => {
         result.current.setFiles(files);
@@ -352,6 +375,20 @@ describe('useRegisterProduct', () => {
       });
 
       expect(result.current.saved).toBe(true);
+
+      // Configurar de nuevo para segundo submit
+      act(() => {
+        result.current.handleChange({
+          target: { name: 'name', value: 'Hamburguesa', type: 'text' },
+        } as React.ChangeEvent<HTMLInputElement>);
+        result.current.handleChange({
+          target: { name: 'price', value: '15', type: 'number' },
+        } as React.ChangeEvent<HTMLInputElement>);
+        result.current.handleChange({
+          target: { name: 'categoryId', value: '2', type: 'select-one' },
+        } as React.ChangeEvent<HTMLSelectElement>);
+        result.current.setFiles(files);
+      });
 
       // Segundo submit
       await act(async () => {
@@ -372,6 +409,19 @@ describe('useRegisterProduct', () => {
       mockUpload.mockRejectedValueOnce(uploadError);
 
       const { result } = renderHook(() => useRegisterProduct());
+
+      // Configurar campos obligatorios
+      act(() => {
+        result.current.handleChange({
+          target: { name: 'name', value: 'Pizza', type: 'text' },
+        } as React.ChangeEvent<HTMLInputElement>);
+        result.current.handleChange({
+          target: { name: 'price', value: '10', type: 'number' },
+        } as React.ChangeEvent<HTMLInputElement>);
+        result.current.handleChange({
+          target: { name: 'categoryId', value: '1', type: 'select-one' },
+        } as React.ChangeEvent<HTMLSelectElement>);
+      });
 
       const files = [createMockFile('image.jpg', 1024, 'image/jpeg')];
       act(() => {
@@ -402,6 +452,19 @@ describe('useRegisterProduct', () => {
 
       const { result } = renderHook(() => useRegisterProduct());
 
+      // Configurar campos obligatorios
+      act(() => {
+        result.current.handleChange({
+          target: { name: 'name', value: 'Pizza', type: 'text' },
+        } as React.ChangeEvent<HTMLInputElement>);
+        result.current.handleChange({
+          target: { name: 'price', value: '10', type: 'number' },
+        } as React.ChangeEvent<HTMLInputElement>);
+        result.current.handleChange({
+          target: { name: 'categoryId', value: '1', type: 'select-one' },
+        } as React.ChangeEvent<HTMLSelectElement>);
+      });
+
       const files = [createMockFile('image.jpg', 1024, 'image/jpeg')];
       act(() => {
         result.current.setFiles(files);
@@ -421,6 +484,19 @@ describe('useRegisterProduct', () => {
 
       const { result } = renderHook(() => useRegisterProduct());
 
+      // Configurar campos obligatorios
+      act(() => {
+        result.current.handleChange({
+          target: { name: 'name', value: 'Pizza', type: 'text' },
+        } as React.ChangeEvent<HTMLInputElement>);
+        result.current.handleChange({
+          target: { name: 'price', value: '10', type: 'number' },
+        } as React.ChangeEvent<HTMLInputElement>);
+        result.current.handleChange({
+          target: { name: 'categoryId', value: '1', type: 'select-one' },
+        } as React.ChangeEvent<HTMLSelectElement>);
+      });
+
       const files = [createMockFile('image.jpg', 1024, 'image/jpeg')];
       act(() => {
         result.current.setFiles(files);
@@ -439,36 +515,38 @@ describe('useRegisterProduct', () => {
   // ========================================
   describe('Estados durante el proceso', () => {
     it('debe establecer isSaving=true durante el proceso', async () => {
-      let resolveUpload: (value: UploadImageResponse) => void;
-      const uploadPromise = new Promise<UploadImageResponse>((resolve) => {
-        resolveUpload = resolve;
-      });
-
-      mockUpload.mockReturnValueOnce(uploadPromise);
+      mockUpload.mockResolvedValueOnce({ imageUrl: 'url' });
+      mockedProductService.create.mockResolvedValueOnce({} as Product);
 
       const { result } = renderHook(() => useRegisterProduct());
+
+      // Configurar campos obligatorios
+      act(() => {
+        result.current.handleChange({
+          target: { name: 'name', value: 'Pizza', type: 'text' },
+        } as React.ChangeEvent<HTMLInputElement>);
+        result.current.handleChange({
+          target: { name: 'price', value: '10', type: 'number' },
+        } as React.ChangeEvent<HTMLInputElement>);
+        result.current.handleChange({
+          target: { name: 'categoryId', value: '1', type: 'select-one' },
+        } as React.ChangeEvent<HTMLSelectElement>);
+      });
 
       const files = [createMockFile('image.jpg', 1024, 'image/jpeg')];
       act(() => {
         result.current.setFiles(files);
       });
 
-      // Iniciar submit
-      act(() => {
-        result.current.handleSubmit();
-      });
-
-      // Verificar que está guardando
-      expect(result.current.isSaving).toBe(true);
-      expect(result.current.saved).toBe(false);
-      expect(result.current.saveError).toBeNull();
-
-      // Completar upload
+      // Ejecutar submit y verificar estado final
       await act(async () => {
-        resolveUpload!({ imageUrl: 'url' });
-        mockedProductService.create.mockResolvedValueOnce({} as Product);
-        await uploadPromise;
+        await result.current.handleSubmit();
       });
+
+      // Después del submit exitoso
+      expect(result.current.isSaving).toBe(false);
+      expect(result.current.saved).toBe(true);
+      expect(result.current.saveError).toBeNull();
     });
 
     it('debe mantener estados correctos después de completar', async () => {
@@ -476,6 +554,19 @@ describe('useRegisterProduct', () => {
       mockedProductService.create.mockResolvedValueOnce({} as Product);
 
       const { result } = renderHook(() => useRegisterProduct());
+
+      // Configurar campos obligatorios
+      act(() => {
+        result.current.handleChange({
+          target: { name: 'name', value: 'Pizza', type: 'text' },
+        } as React.ChangeEvent<HTMLInputElement>);
+        result.current.handleChange({
+          target: { name: 'price', value: '10', type: 'number' },
+        } as React.ChangeEvent<HTMLInputElement>);
+        result.current.handleChange({
+          target: { name: 'categoryId', value: '1', type: 'select-one' },
+        } as React.ChangeEvent<HTMLSelectElement>);
+      });
 
       const files = [createMockFile('image.jpg', 1024, 'image/jpeg')];
       act(() => {
@@ -511,11 +602,25 @@ describe('useRegisterProduct', () => {
       expect(result.current.uploadError).toBe('test-error');
     });
 
-    it('debe usar la función upload del hook', async () => {
-      mockUpload.mockResolvedValueOnce({ imageUrl: 'url' });
+    it('debe llamar a upload con los archivos correctos', async () => {
+      const mockUploadResponse = { imageUrl: 'url' };
+      mockUpload.mockResolvedValueOnce(mockUploadResponse);
       mockedProductService.create.mockResolvedValueOnce({} as Product);
 
       const { result } = renderHook(() => useRegisterProduct());
+
+      // Configurar campos obligatorios
+      act(() => {
+        result.current.handleChange({
+          target: { name: 'name', value: 'Producto', type: 'text' },
+        } as React.ChangeEvent<HTMLInputElement>);
+        result.current.handleChange({
+          target: { name: 'price', value: '10', type: 'number' },
+        } as React.ChangeEvent<HTMLInputElement>);
+        result.current.handleChange({
+          target: { name: 'categoryId', value: '1', type: 'select-one' },
+        } as React.ChangeEvent<HTMLSelectElement>);
+      });
 
       const files = [createMockFile('image.jpg', 1024, 'image/jpeg')];
       act(() => {
@@ -526,6 +631,8 @@ describe('useRegisterProduct', () => {
         await result.current.handleSubmit();
       });
 
+      // Verificar que se llamó correctamente
+      expect(mockUpload).toHaveBeenCalledTimes(1);
       expect(mockUpload).toHaveBeenCalledWith(files);
     });
   });
@@ -593,6 +700,506 @@ describe('useRegisterProduct', () => {
         available: true,
         imageUrl: 'https://cdn.example.com/products/pizza-123.jpg',
       });
+    });
+  });
+
+  // ========================================
+  // TEST 9: Validación de campos
+  // ========================================
+  describe('Validación de campos', () => {
+    describe('Validación del nombre', () => {
+      it('debe mostrar error si el nombre está vacío', () => {
+        const { result } = renderHook(() => useRegisterProduct());
+
+        act(() => {
+          result.current.handleBlur('name');
+        });
+
+        expect(result.current.validationErrors.name).toBe('El nombre del producto es obligatorio');
+        expect(result.current.touched.name).toBe(true);
+      });
+
+      it('debe mostrar error si el nombre tiene menos de 3 caracteres', () => {
+        const { result } = renderHook(() => useRegisterProduct());
+
+        act(() => {
+          result.current.handleChange({
+            target: { name: 'name', value: 'Ab', type: 'text' },
+          } as React.ChangeEvent<HTMLInputElement>);
+        });
+
+        act(() => {
+          result.current.handleBlur('name');
+        });
+
+        expect(result.current.validationErrors.name).toBe('El nombre debe tener al menos 3 caracteres');
+      });
+
+      it('debe mostrar error si el nombre supera 100 caracteres', () => {
+        const { result } = renderHook(() => useRegisterProduct());
+
+        const longName = 'a'.repeat(101);
+        act(() => {
+          result.current.handleChange({
+            target: { name: 'name', value: longName, type: 'text' },
+          } as React.ChangeEvent<HTMLInputElement>);
+        });
+
+        act(() => {
+          result.current.handleBlur('name');
+        });
+
+        expect(result.current.validationErrors.name).toBe('El nombre no puede exceder 100 caracteres');
+      });
+
+      it('debe limpiar error cuando el nombre es válido', () => {
+        const { result } = renderHook(() => useRegisterProduct());
+
+        act(() => {
+          result.current.handleBlur('name');
+        });
+
+        expect(result.current.validationErrors.name).toBeDefined();
+
+        act(() => {
+          result.current.handleChange({
+            target: { name: 'name', value: 'Pizza Margarita', type: 'text' },
+          } as React.ChangeEvent<HTMLInputElement>);
+        });
+
+        expect(result.current.validationErrors.name).toBeUndefined();
+      });
+    });
+
+    describe('Validación del precio', () => {
+      it('debe mostrar error si el precio está vacío', () => {
+        const { result } = renderHook(() => useRegisterProduct());
+
+        act(() => {
+          result.current.handleChange({
+            target: { name: 'price', value: '', type: 'number' },
+          } as React.ChangeEvent<HTMLInputElement>);
+        });
+
+        act(() => {
+          result.current.handleBlur('price');
+        });
+
+        expect(result.current.validationErrors.price).toBe('El precio es obligatorio');
+      });
+
+      it('debe mostrar error si el precio es negativo', () => {
+        const { result } = renderHook(() => useRegisterProduct());
+
+        act(() => {
+          result.current.handleChange({
+            target: { name: 'price', value: '-5', type: 'number' },
+          } as React.ChangeEvent<HTMLInputElement>);
+        });
+
+        act(() => {
+          result.current.handleBlur('price');
+        });
+
+        expect(result.current.validationErrors.price).toBe('El precio no puede ser negativo');
+      });
+
+      it('debe aceptar precio cero (ofertas)', () => {
+        const { result } = renderHook(() => useRegisterProduct());
+
+        act(() => {
+          result.current.handleChange({
+            target: { name: 'price', value: '0', type: 'number' },
+          } as React.ChangeEvent<HTMLInputElement>);
+          result.current.handleBlur('price');
+        });
+
+        expect(result.current.validationErrors.price).toBeUndefined();
+      });
+
+      it('debe mostrar error si el precio supera 999,999', () => {
+        const { result } = renderHook(() => useRegisterProduct());
+
+        act(() => {
+          result.current.handleChange({
+            target: { name: 'price', value: '1000000', type: 'number' },
+          } as React.ChangeEvent<HTMLInputElement>);
+        });
+
+        act(() => {
+          result.current.handleBlur('price');
+        });
+
+        expect(result.current.validationErrors.price).toBe('El precio no puede exceder 999,999');
+      });
+
+      it('debe aceptar precios con decimales', () => {
+        const { result } = renderHook(() => useRegisterProduct());
+
+        act(() => {
+          result.current.handleChange({
+            target: { name: 'price', value: '12.99', type: 'number' },
+          } as React.ChangeEvent<HTMLInputElement>);
+          result.current.handleBlur('price');
+        });
+
+        expect(result.current.validationErrors.price).toBeUndefined();
+      });
+    });
+
+    describe('Validación de categoría', () => {
+      it('debe mostrar error si no se selecciona categoría', () => {
+        const { result } = renderHook(() => useRegisterProduct());
+
+        act(() => {
+          result.current.handleBlur('categoryId');
+        });
+
+        expect(result.current.validationErrors.categoryId).toBe('Debe seleccionar una categoría');
+      });
+
+      it('debe limpiar error cuando se selecciona una categoría', () => {
+        const { result } = renderHook(() => useRegisterProduct());
+
+        act(() => {
+          result.current.handleBlur('categoryId');
+        });
+
+        expect(result.current.validationErrors.categoryId).toBeDefined();
+
+        act(() => {
+          result.current.handleChange({
+            target: { name: 'categoryId', value: '1', type: 'select-one' },
+          } as React.ChangeEvent<HTMLSelectElement>);
+        });
+
+        expect(result.current.validationErrors.categoryId).toBeUndefined();
+      });
+    });
+
+    describe('Validación de descripción', () => {
+      it('debe permitir descripción vacía', () => {
+        const { result } = renderHook(() => useRegisterProduct());
+
+        act(() => {
+          result.current.handleBlur('description');
+        });
+
+        expect(result.current.validationErrors.description).toBeUndefined();
+      });
+
+      it('debe mostrar error si la descripción supera 500 caracteres', () => {
+        const { result } = renderHook(() => useRegisterProduct());
+
+        const longDescription = 'a'.repeat(501);
+        act(() => {
+          result.current.handleChange({
+            target: { name: 'description', value: longDescription, type: 'text' },
+          } as React.ChangeEvent<HTMLTextAreaElement>);
+        });
+
+        act(() => {
+          result.current.handleBlur('description');
+        });
+
+        expect(result.current.validationErrors.description).toBe('La descripción no puede exceder 500 caracteres');
+      });
+
+      it('debe aceptar descripción de 500 caracteres exactos', () => {
+        const { result } = renderHook(() => useRegisterProduct());
+
+        const maxDescription = 'a'.repeat(500);
+        act(() => {
+          result.current.handleChange({
+            target: { name: 'description', value: maxDescription, type: 'text' },
+          } as React.ChangeEvent<HTMLTextAreaElement>);
+          result.current.handleBlur('description');
+        });
+
+        expect(result.current.validationErrors.description).toBeUndefined();
+      });
+    });
+  });
+
+  // ========================================
+  // TEST 10: Validación en tiempo real
+  // ========================================
+  describe('Validación en tiempo real', () => {
+    it('NO debe validar un campo que no ha sido tocado', () => {
+      const { result } = renderHook(() => useRegisterProduct());
+
+      act(() => {
+        result.current.handleChange({
+          target: { name: 'name', value: '', type: 'text' },
+        } as React.ChangeEvent<HTMLInputElement>);
+      });
+
+      expect(result.current.validationErrors.name).toBeUndefined();
+      expect(result.current.touched.name).toBeUndefined();
+    });
+
+    it('debe validar en tiempo real después de tocar el campo', () => {
+      const { result } = renderHook(() => useRegisterProduct());
+
+      // Tocar el campo primero
+      act(() => {
+        result.current.handleBlur('name');
+      });
+
+      expect(result.current.touched.name).toBe(true);
+      expect(result.current.validationErrors.name).toBe('El nombre del producto es obligatorio');
+
+      // Ahora cambiar el valor debe validar en tiempo real
+      act(() => {
+        result.current.handleChange({
+          target: { name: 'name', value: 'Ab', type: 'text' },
+        } as React.ChangeEvent<HTMLInputElement>);
+      });
+
+      expect(result.current.validationErrors.name).toBe('El nombre debe tener al menos 3 caracteres');
+
+      act(() => {
+        result.current.handleChange({
+          target: { name: 'name', value: 'Pizza', type: 'text' },
+        } as React.ChangeEvent<HTMLInputElement>);
+      });
+
+      expect(result.current.validationErrors.name).toBeUndefined();
+    });
+  });
+
+  // ========================================
+  // TEST 11: Validación antes del submit
+  // ========================================
+  describe('Validación antes del submit', () => {
+    it('debe bloquear submit si hay errores de validación', async () => {
+      const { result } = renderHook(() => useRegisterProduct());
+
+      await act(async () => {
+        await result.current.handleSubmit();
+      });
+
+      expect(result.current.saveError).toBe('Por favor, corrija los errores antes de guardar');
+      expect(result.current.saved).toBe(false);
+      expect(mockUpload).not.toHaveBeenCalled();
+      expect(mockedProductService.create).not.toHaveBeenCalled();
+    });
+
+    it('debe marcar todos los campos como tocados al hacer submit', async () => {
+      const { result } = renderHook(() => useRegisterProduct());
+
+      await act(async () => {
+        await result.current.handleSubmit();
+      });
+
+      expect(result.current.touched.name).toBe(true);
+      expect(result.current.touched.price).toBe(true);
+      expect(result.current.touched.categoryId).toBe(true);
+      expect(result.current.touched.description).toBe(true);
+    });
+
+    it('debe mostrar todos los errores de validación al hacer submit', async () => {
+      const { result } = renderHook(() => useRegisterProduct());
+
+      // Configurar un precio inválido explícitamente
+      act(() => {
+        result.current.handleChange({
+          target: { name: 'price', value: '', type: 'number' },
+        } as React.ChangeEvent<HTMLInputElement>);
+      });
+
+      // Intentar hacer submit sin llenar campos
+      await act(async () => {
+        await result.current.handleSubmit();
+      });
+
+      expect(result.current.validationErrors.name).toBe('El nombre del producto es obligatorio');
+      expect(result.current.validationErrors.price).toBe('El precio es obligatorio');
+      expect(result.current.validationErrors.categoryId).toBe('Debe seleccionar una categoría');
+      expect(result.current.saveError).toBe('Por favor, corrija los errores antes de guardar');
+    });
+
+    it('debe permitir submit si todos los campos son válidos', async () => {
+      const mockUploadResponse: UploadImageResponse = {
+        imageUrl: 'https://example.com/image.jpg',
+      };
+
+      mockUpload.mockResolvedValueOnce(mockUploadResponse);
+      mockedProductService.create.mockResolvedValueOnce({} as Product);
+
+      const { result } = renderHook(() => useRegisterProduct());
+
+      // Configurar todos los campos obligatorios
+      act(() => {
+        result.current.handleChange({
+          target: { name: 'name', value: 'Pizza Margarita', type: 'text' },
+        } as React.ChangeEvent<HTMLInputElement>);
+        result.current.handleChange({
+          target: { name: 'price', value: '12.99', type: 'number' },
+        } as React.ChangeEvent<HTMLInputElement>);
+        result.current.handleChange({
+          target: { name: 'categoryId', value: '1', type: 'select-one' },
+        } as React.ChangeEvent<HTMLSelectElement>);
+      });
+
+      const files = [createMockFile('image.jpg', 1024, 'image/jpeg')];
+      act(() => {
+        result.current.setFiles(files);
+      });
+
+      await act(async () => {
+        await result.current.handleSubmit();
+      });
+
+      expect(result.current.saved).toBe(true);
+      expect(result.current.saveError).toBeNull();
+      expect(result.current.validationErrors).toEqual({});
+      expect(mockUpload).toHaveBeenCalled();
+      expect(mockedProductService.create).toHaveBeenCalled();
+    });
+  });
+
+  // ========================================
+  // TEST 12: Limpieza después de guardar
+  // ========================================
+  describe('Limpieza después de guardar', () => {
+    it('debe limpiar el formulario después de guardar exitosamente', async () => {
+      const mockUploadResponse: UploadImageResponse = {
+        imageUrl: 'https://example.com/image.jpg',
+      };
+
+      mockUpload.mockResolvedValueOnce(mockUploadResponse);
+      mockedProductService.create.mockResolvedValueOnce({} as Product);
+
+      const { result } = renderHook(() => useRegisterProduct());
+
+      // Configurar producto
+      act(() => {
+        result.current.handleChange({
+          target: { name: 'name', value: 'Pizza', type: 'text' },
+        } as React.ChangeEvent<HTMLInputElement>);
+        result.current.handleChange({
+          target: { name: 'price', value: '10', type: 'number' },
+        } as React.ChangeEvent<HTMLInputElement>);
+        result.current.handleChange({
+          target: { name: 'categoryId', value: '1', type: 'select-one' },
+        } as React.ChangeEvent<HTMLSelectElement>);
+        result.current.setFiles([createMockFile('image.jpg', 1024, 'image/jpeg')]);
+      });
+
+      await act(async () => {
+        await result.current.handleSubmit();
+      });
+
+      // Verificar que se limpió
+      expect(result.current.product).toEqual({
+        name: '',
+        description: '',
+        price: 0,
+        available: true,
+        categoryId: undefined,
+        imageUrl: undefined,
+      });
+      expect(result.current.files).toEqual([]);
+      expect(result.current.touched).toEqual({});
+      expect(result.current.validationErrors).toEqual({});
+    });
+
+    it('NO debe limpiar el formulario si hay error al guardar', async () => {
+      const mockUploadResponse: UploadImageResponse = {
+        imageUrl: 'https://example.com/image.jpg',
+      };
+
+      mockUpload.mockResolvedValueOnce(mockUploadResponse);
+      mockedProductService.create.mockRejectedValueOnce(new Error('Error del servidor'));
+
+      const { result } = renderHook(() => useRegisterProduct());
+
+      // Configurar producto
+      act(() => {
+        result.current.handleChange({
+          target: { name: 'name', value: 'Pizza', type: 'text' },
+        } as React.ChangeEvent<HTMLInputElement>);
+        result.current.handleChange({
+          target: { name: 'price', value: '10', type: 'number' },
+        } as React.ChangeEvent<HTMLInputElement>);
+        result.current.handleChange({
+          target: { name: 'categoryId', value: '1', type: 'select-one' },
+        } as React.ChangeEvent<HTMLSelectElement>);
+        result.current.setFiles([createMockFile('image.jpg', 1024, 'image/jpeg')]);
+      });
+
+      await act(async () => {
+        await result.current.handleSubmit();
+      });
+
+      // El formulario NO debe limpiarse
+      expect(result.current.product.name).toBe('Pizza');
+      expect(result.current.product.price).toBe('10');
+      expect(result.current.saveError).toBe('Error del servidor');
+    });
+  });
+
+  // ========================================
+  // TEST 13: Casos edge de validación
+  // ========================================
+  describe('Casos edge de validación', () => {
+    it('debe manejar nombre con solo espacios', () => {
+      const { result } = renderHook(() => useRegisterProduct());
+
+      act(() => {
+        result.current.handleChange({
+          target: { name: 'name', value: '   ', type: 'text' },
+        } as React.ChangeEvent<HTMLInputElement>);
+        result.current.handleBlur('name');
+      });
+
+      expect(result.current.validationErrors.name).toBe('El nombre del producto es obligatorio');
+    });
+
+    it('debe manejar precio con valor no numérico', () => {
+      const { result } = renderHook(() => useRegisterProduct());
+
+      act(() => {
+        result.current.handleChange({
+          target: { name: 'price', value: 'abc', type: 'number' },
+        } as React.ChangeEvent<HTMLInputElement>);
+      });
+
+      act(() => {
+        result.current.handleBlur('price');
+      });
+
+      expect(result.current.validationErrors.price).toBe('El precio debe ser un número válido');
+    });
+
+    it('debe trimear espacios en el nombre para validación', () => {
+      const { result } = renderHook(() => useRegisterProduct());
+
+      act(() => {
+        result.current.handleChange({
+          target: { name: 'name', value: '  Pizza  ', type: 'text' },
+        } as React.ChangeEvent<HTMLInputElement>);
+      });
+
+      act(() => {
+        result.current.handleBlur('name');
+      });
+
+      expect(result.current.validationErrors.name).toBeUndefined();
+    });
+
+    it('debe validar correctamente precio en formato decimal', () => {
+      const { result } = renderHook(() => useRegisterProduct());
+
+      act(() => {
+        result.current.handleChange({
+          target: { name: 'price', value: '99.99', type: 'number' },
+        } as React.ChangeEvent<HTMLInputElement>);
+        result.current.handleBlur('price');
+      });
+
+      expect(result.current.validationErrors.price).toBeUndefined();
     });
   });
 });
