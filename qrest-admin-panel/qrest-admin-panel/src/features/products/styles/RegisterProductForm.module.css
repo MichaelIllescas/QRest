@@ -12,9 +12,17 @@
   animation: fadeIn 0.25s ease-out;
 }
 
+/* Contenedor de campo con error */
+.fieldContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
 /* Inputs generales */
 .input,
-.select {
+.select,
+.textarea {
   width: 100%;
   padding: 0.65rem 0.75rem;
   font-size: 0.95rem;
@@ -22,10 +30,17 @@
   border-radius: 8px;
   background: #fafafa;
   transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 80px;
 }
 
 .input:focus,
-.select:focus {
+.select:focus,
+.textarea:focus {
   outline: none;
   border-color: #3b82f6;
   background: #ffffff;
@@ -70,6 +85,32 @@
 }
 
 /* Mensajes */
+/* Estilos de validación */
+.inputError {
+  border-color: #ef4444 !important;
+  background: #fef2f2 !important;
+}
+
+.inputError:focus {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.errorText {
+  font-size: 0.85rem;
+  color: #dc2626;
+  margin-top: -0.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  animation: slideDown 0.2s ease-out;
+}
+
+.errorText::before {
+  content: '⚠';
+  font-size: 0.9rem;
+}
+
 .error {
   margin: 0;
   padding: 0.6rem 0.8rem;
@@ -77,6 +118,7 @@
   color: #b91c1c;
   border-radius: 6px;
   font-size: 0.9rem;
+  border-left: 3px solid #dc2626;
 }
 
 .success {
@@ -86,10 +128,22 @@
   color: #166534;
   border-radius: 6px;
   font-size: 0.9rem;
+  border-left: 3px solid #16a34a;
 }
 
-/* Animación suave de entrada */
+/* Animaciones */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { 
+    opacity: 0; 
+    transform: translateY(-4px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
 }
