@@ -1,0 +1,197 @@
+/* ====== CONTENEDOR GENERAL ====== */
+
+.tableContainer {
+  width: 100%;
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+  animation: fadeIn 0.35s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ====== HEADER ====== */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #333;
+  letter-spacing: 0.4px;
+}
+
+.headerActions {
+  display: flex;
+  gap: 0.6rem;
+}
+
+
+/* ====== INPUT DE BÚSQUEDA ====== */
+
+.searchBox {
+  width: 100%;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid #d4d4d4;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: all 0.25s ease;
+  background: #fafafa;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #4f46e5;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+
+/* ====== TABLA ====== */
+
+.wrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.table th {
+  padding: 0.8rem;
+  text-align: left;
+  background: #f7f7f7;
+  border-bottom: 2px solid #e5e5e5;
+  font-weight: 600;
+  color: #444;
+  user-select: none;
+}
+
+.table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #eaeaea;
+  background: #fff;
+  transition: background 0.25s ease;
+}
+
+/* Hover suave */
+.table tbody tr:hover td {
+  background: #f5f7ff;
+}
+
+/* ====== ORDENAMIENTO ====== */
+
+.sortable {
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.sortable:hover {
+  color: #4f46e5;
+}
+
+.thContent {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.sortIcon {
+  font-size: 0.9rem;
+  transition: transform 0.3s ease, opacity 0.2s ease;
+}
+
+.sortIcon.asc {
+  transform: rotate(180deg);
+}
+
+
+/* ====== NO DATA ====== */
+
+.noData {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1rem;
+  color: #666;
+  opacity: 0.75;
+}
+
+
+/* ====== PAGINACIÓN ====== */
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 1rem;
+}
+
+.pagination button {
+  padding: 0.45rem 0.75rem;
+  border: 1px solid #d1d1d1;
+  background: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-size: 0.9rem;
+}
+
+.pagination button:hover:not(:disabled) {
+  background: #4f46e5;
+  color: white;
+}
+
+.pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.active {
+  background: #4f46e5 !important;
+  color: white !important;
+  border-color: #4f46e5 !important;
+}
+
+.ellipsis {
+  padding: 0.3rem 0.5rem;
+  opacity: 0.6;
+}
+
+
+/* ====== VARIANTES ====== */
+
+.default {}
+
+.bordered .table th,
+.bordered .table td {
+  border: 1px solid #dcdcdc;
+}
+
+.striped .table tr:nth-child(even) td {
+  background: #fafafa;
+}
+
+.compact .table th,
+.compact .table td {
+  padding: 0.45rem 0.5rem;
+  font-size: 0.85rem;
+}
