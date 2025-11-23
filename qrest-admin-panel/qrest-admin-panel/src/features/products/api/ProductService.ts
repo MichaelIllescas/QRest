@@ -14,6 +14,7 @@ import type { Product } from "../types/product";
 
 
 const PRODUCT_REGISTER_ENDPOINT = "/api/admin/products/create";
+const PRODUCT_LIST_ENDPOINT = "/api/admin/products/list";
 
 //servicio para registrar productos
 const registerProduct = async (product: Product): Promise<Product> => {
@@ -24,6 +25,12 @@ const registerProduct = async (product: Product): Promise<Product> => {
   return data;
 };
 
+const listProducts = async (): Promise<Product[]> => {
+  const { data } = await apiClient.get<Product[]>(PRODUCT_LIST_ENDPOINT);
+  return data;
+};
+
 export const productService = {
   create: registerProduct,
+  list: listProducts,
 };

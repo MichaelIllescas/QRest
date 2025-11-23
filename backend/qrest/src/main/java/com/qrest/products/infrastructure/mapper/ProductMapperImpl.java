@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  * Implementación simple y explícita de ProductMapper.
  * - Todos los métodos son null-safe: si la entrada es null, devuelve null.
  * - Cuando solo se dispone del id de categoría (CreateProductRequestDTO), se crea
- *   una Category mínima con nombre "Unknown" para cumplir las validaciones del dominio.
+ * una Category mínima con nombre "Unknown" para cumplir las validaciones del dominio.
  * - Cuando solo se dispone del nombre de categoría (ProductDTO), se usa Category.create(name).
  */
 @Component
@@ -51,7 +51,7 @@ public class ProductMapperImpl implements ProductMapper {
         Category category = null;
         if (dto.getCategoryName() != null) {
             // Usamos create para no necesitar id ni active
-            category = Category.create(dto.getCategoryName());
+            category = fingCategoryById(dto.getCategoryId());
         }
         return new Product(
                 dto.getId(),
@@ -113,9 +113,10 @@ public class ProductMapperImpl implements ProductMapper {
 
 
     private Category fingCategoryById(Long categoryId) {
+        // Si no hay id, devolvemos una categoría por defecto para respetar las invariantes del dominio
         if (categoryId == null) {
             return null;
         }
-        return categoryRepository.findById(categoryId).orElse(null);
+        return categoryRepository.findById(categoryId).orElse(Category.create("Sin categoría"));
     }
 }

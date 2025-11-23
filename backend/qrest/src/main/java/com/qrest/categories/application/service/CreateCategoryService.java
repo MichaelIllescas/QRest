@@ -25,7 +25,6 @@ public class CreateCategoryService implements CreateCategoryUseCase {
     @Override
     public Category createCategory(String name) {
         String normalized = Category.normalizeNameForPersistence(name);
-        System.out.println("Encontro: " + categoryRepositoryPort.existsByName(normalized));
         if (categoryRepositoryPort.existsByName(normalized)) {
             throw new DuplicateCategoryNameException(name);
         }

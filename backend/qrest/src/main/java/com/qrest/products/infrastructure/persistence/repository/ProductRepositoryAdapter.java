@@ -6,6 +6,8 @@ import com.qrest.products.infrastructure.mapper.ProductMapper;
 import com.qrest.products.infrastructure.persistence.entity.ProductEntity;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public class ProductRepositoryAdapter implements ProductRepositoryPort {
 
@@ -31,5 +33,10 @@ public class ProductRepositoryAdapter implements ProductRepositoryPort {
     @Override
     public Boolean existsById(Long id) {
         return productRepositoryJPA.existsById(id);
+    }
+
+    @Override
+    public List<Product> getAllProducts() {
+        return productRepositoryJPA.findAll().stream().map(productMapper::entityToProduct).toList();
     }
 }
