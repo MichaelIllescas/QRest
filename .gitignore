@@ -27,3 +27,10 @@ database/
 *.db
 *.sqlite
 
+TestResults.xml
+# Environment settings file
+.env
+
+coverage/
+
+node_modules/

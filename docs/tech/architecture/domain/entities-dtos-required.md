@@ -127,6 +127,7 @@ Este documento lista todas las entidades JPA y sus DTOs correspondientes, indica
 - price : BigDecimal **(requerido)**
 - categoryId : Long **(requerido)**
 - available : boolean (default true)
+- imageUrl : String 
 
 ---
 
@@ -135,6 +136,8 @@ Este documento lista todas las entidades JPA y sus DTOs correspondientes, indica
 - description : String (opcional)
 - price : BigDecimal (opcional)
 - categoryId : Long (opcional)
+- imageUrl : String (opcional)
+- available : boolean (opcional)
 
 ---
 
@@ -146,6 +149,7 @@ Este documento lista todas las entidades JPA y sus DTOs correspondientes, indica
 ## CategoryDTO
 - id : Long
 - name : String **(requerido)**
+- active : boolean **(requerido)**
 
 ---
 

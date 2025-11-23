@@ -94,6 +94,21 @@ body.clean-mode .page-content {
   border: none !important;
 }
 
+/* Mensajes de estado */
+.loading-message {
+  text-align: center;
+  padding: 2rem;
+}
+
+.error-message {
+  padding: 1rem;
+  background-color: #fee;
+  border: 1px solid #fcc;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  color: #c33;
+}
+
 /* Título principal */
 .page-title {
   font-size: 2rem;
@@ -274,4 +289,98 @@ body.clean-mode .page-content {
 .page-header:hover {
   border-color: #9ca3af;
   transition: border-color 0.2s ease;
+}
+/* Mejora visual del botón actual sin cambiar clases */
+.btn.btn-primary {
+  font-weight: 600;
+  letter-spacing: 0.3px;
+
+  padding: 0.65rem 1.4rem !important;
+  border-radius: 10px !important;
+
+  transition: all 0.25s ease !important;
+  box-shadow: 0 2px 6px rgba(0, 110, 255, 0.25);
+}
+
+/* Hover elegante */
+.btn.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 110, 255, 0.35);
+}
+
+/* Al presionar (click) */
+.btn.btn-primary:active {
+  transform: scale(0.98);
+  box-shadow: 0 3px 10px rgba(0, 110, 255, 0.25);
+}
+
+/* Estado "Ver listado" → tono diferente */
+.btn.btn-primary.show-list {
+  background-color: #6366f1 !important;
+  border-color: #6366f1 !important;
+}
+
+/* Hover en modo "Ver listado" */
+.btn.btn-primary.show-list:hover {
+  background-color: #4f46e5 !important;
+}
+.container-button-manager{
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+/* ============================
+   BOTÓN SECONDARY (gris moderno)
+   ============================ */
+.btn-secondary {
+  background-color: #6b7280 !important; /* Tailwind Gray-500 */
+  border-color: #6b7280 !important;
+  color: #ffffff !important;
+  font-weight: 500;
+  padding: 0.55rem 1.2rem !important;
+  border-radius: 10px !important;
+
+  transition: all 0.25s ease !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.10);
+}
+
+.btn-secondary:hover {
+  background-color: #4b5563 !important; /* Gray-600 */
+  border-color: #4b5563 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-secondary:active {
+  transform: scale(0.97);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+
+/* ============================
+   BOTÓN DANGER (rojo elegante)
+   ============================ */
+.btn-danger {
+  background-color: #ef4444 !important; /* Red-500 */
+  border-color: #ef4444 !important;
+  color: #ffffff !important;
+  font-weight: 600;
+
+  padding: 0.55rem 1.2rem !important;
+  border-radius: 10px !important;
+
+  transition: all 0.25s ease !important;
+  box-shadow: 0 2px 5px rgba(239, 68, 68, 0.35);
+}
+
+.btn-danger:hover {
+  background-color: #dc2626 !important; /* Red-600 */
+  border-color: #dc2626 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(239, 68, 68, 0.45);
+}
+
+.btn-danger:active {
+  transform: scale(0.97);
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.38);
 }

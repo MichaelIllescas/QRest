@@ -1,0 +1,212 @@
+/* Bloque base del Alert */
+.alert {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px 24px;
+  border-radius: 12px;
+  border: 1px solid;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.alert:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+/* Elementos del Alert */
+.alert__icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.alert__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.alert__title {
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1.3;
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+.alert__message {
+  font-size: 15px;
+  line-height: 1.6;
+  opacity: 0.9;
+  font-weight: 400;
+}
+
+.alert__close {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  opacity: 0.7;
+}
+
+.alert__close:hover {
+  opacity: 1;
+  background-color: rgba(0, 0, 0, 0.1);
+  transform: scale(1.1);
+}
+
+.alert__close:active {
+  transform: scale(0.95);
+}
+
+/* Modificadores: Variantes de color */
+
+/* Success - Verde */
+.alert--success {
+  background: linear-gradient(135deg, #e8f8f0 0%, #d4f4e2 100%);
+  border-color: #52c788;
+  color: #0d5028;
+}
+
+.alert--success .alert__icon {
+  background: linear-gradient(135deg, #52c788 0%, #3ab676 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(82, 199, 136, 0.3);
+}
+
+.alert--success .alert__close {
+  color: #0d5028;
+}
+
+.alert--success .alert__close:hover {
+  background-color: rgba(82, 199, 136, 0.15);
+}
+
+/* Error - Rojo */
+.alert--error {
+  background: linear-gradient(135deg, #ffe5e8 0%, #ffd4d9 100%);
+  border-color: #f5576c;
+  color: #8b1725;
+}
+
+.alert--error .alert__icon {
+  background: linear-gradient(135deg, #f5576c 0%, #e73c51 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(245, 87, 108, 0.3);
+}
+
+.alert--error .alert__close {
+  color: #8b1725;
+}
+
+.alert--error .alert__close:hover {
+  background-color: rgba(245, 87, 108, 0.15);
+}
+
+/* Warning - Amarillo/Naranja */
+.alert--warning {
+  background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+  border-color: #ffb74d;
+  color: #8d5b00;
+}
+
+.alert--warning .alert__icon {
+  background: linear-gradient(135deg, #ffb74d 0%, #ffa726 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(255, 183, 77, 0.3);
+}
+
+.alert--warning .alert__close {
+  color: #8d5b00;
+}
+
+.alert--warning .alert__close:hover {
+  background-color: rgba(255, 183, 77, 0.15);
+}
+
+/* Info - Azul */
+.alert--info {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border-color: #42a5f5;
+  color: #0d47a1;
+}
+
+.alert--info .alert__icon {
+  background: linear-gradient(135deg, #42a5f5 0%, #2196f3 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(66, 165, 245, 0.3);
+}
+
+.alert--info .alert__close {
+  color: #0d47a1;
+}
+
+.alert--info .alert__close:hover {
+  background-color: rgba(66, 165, 245, 0.15);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .alert {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .alert__title {
+    font-size: 14px;
+  }
+
+  .alert__message {
+    font-size: 13px;
+  }
+
+  .alert__icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .alert__icon svg {
+    width: 20px;
+    height: 20px;
+  }
+}
