@@ -425,7 +425,7 @@ describe('useRegisterCategory', () => {
       });
 
       expect(result.current.saved).toBe(false);
-      expect(result.current.saveError).toBe('Error al guardar categoría');
+      expect(result.current.saveError).toBe('Error desconocido');
       expect(result.current.isSaving).toBe(false);
     });
 

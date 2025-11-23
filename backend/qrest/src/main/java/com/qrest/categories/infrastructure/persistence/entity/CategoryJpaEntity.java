@@ -21,11 +21,12 @@ public class CategoryJpaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_categoria")
+
     private Long id;
 
-    @Column(name = "nombre", nullable = false, length = 100, unique = true)
+    @Column(name = "name", nullable = false, length = 100, unique = true)
     private String name;
 
-    @Column(name = "activa", nullable = false)
+    @Column(name = "active", nullable = false)
     private boolean active;
 }

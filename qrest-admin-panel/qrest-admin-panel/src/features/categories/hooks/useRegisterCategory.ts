@@ -3,9 +3,9 @@
  * debe ser tipada con category, validar los campos necesarios
  */
 
-import { useState } from 'react';
-import { categoryService } from '../api/categoryService';
-import type { Category } from '../types/category';
+import { useState } from "react";
+import { categoryService } from "../api/categoryService";
+import type { Category } from "../types/category";
 
 interface ValidationErrors {
   name?: string;
@@ -14,30 +14,32 @@ interface ValidationErrors {
 export const useRegisterCategory = () => {
   const [category, setCategory] = useState<Category>({
     id: undefined,
-    name: '',
+    name: "",
     active: true,
   });
 
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
-  const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
+  const [validationErrors, setValidationErrors] = useState<ValidationErrors>(
+    {}
+  );
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   const validateField = (name: string, value: unknown): string | undefined => {
     switch (name) {
-      case 'name': {
-        const strValue = String(value || '');
+      case "name": {
+        const strValue = String(value || "");
         const trimmedValue = strValue.trim();
-        
-        if (trimmedValue === '') {
-          return 'El nombre de la categoría es obligatorio';
+
+        if (trimmedValue === "") {
+          return "El nombre de la categoría es obligatorio";
         }
         if (trimmedValue.length < 3) {
-          return 'El nombre debe tener al menos 3 caracteres';
+          return "El nombre debe tener al menos 3 caracteres";
         }
         if (trimmedValue.length > 100) {
-          return 'El nombre no puede exceder 100 caracteres';
+          return "El nombre no puede exceder 100 caracteres";
         }
         break;
       }
@@ -48,7 +50,7 @@ export const useRegisterCategory = () => {
   const validateForm = (): boolean => {
     const errors: ValidationErrors = {};
 
-    const nameError = validateField('name', category.name);
+    const nameError = validateField("name", category.name);
     if (nameError) errors.name = nameError;
 
     setValidationErrors(errors);
@@ -60,7 +62,7 @@ export const useRegisterCategory = () => {
   ) => {
     const { name, value } = e.target;
 
-    setCategory(prev => ({
+    setCategory((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -68,7 +70,7 @@ export const useRegisterCategory = () => {
     // Validar en tiempo real si el campo ya fue tocado
     if (touched[name]) {
       const error = validateField(name, value);
-      setValidationErrors(prev => ({
+      setValidationErrors((prev) => ({
         ...prev,
         [name]: error,
       }));
@@ -76,9 +78,12 @@ export const useRegisterCategory = () => {
   };
 
   const handleBlur = (fieldName: string) => {
-    setTouched(prev => ({ ...prev, [fieldName]: true }));
-    const error = validateField(fieldName, category[fieldName as keyof Category]);
-    setValidationErrors(prev => ({
+    setTouched((prev) => ({ ...prev, [fieldName]: true }));
+    const error = validateField(
+      fieldName,
+      category[fieldName as keyof Category]
+    );
+    setValidationErrors((prev) => ({
       ...prev,
       [fieldName]: error,
     }));
@@ -92,7 +97,7 @@ export const useRegisterCategory = () => {
 
     // Validar formulario completo
     if (!validateForm()) {
-      setSaveError('Por favor, corrija los errores antes de guardar');
+      setSaveError("Por favor, corrija los errores antes de guardar");
       return;
     }
 
@@ -107,14 +112,18 @@ export const useRegisterCategory = () => {
       // Limpiar formulario después de guardar exitosamente
       setCategory({
         id: undefined,
-        name: ''
+        name: "",
       });
       setTouched({});
       setValidationErrors({});
+    } catch (err: any) {
+      const backendMessage =
+        err?.response?.data?.message ??
+        err?.response?.data?.error ??
+        err.message ??
+        "Error desconocido";
 
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Error al guardar categoría';
-      setSaveError(errorMessage);
+      setSaveError(backendMessage);
     } finally {
       setIsSaving(false);
     }

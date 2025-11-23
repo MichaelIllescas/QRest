@@ -13,7 +13,7 @@ import type { Product } from "../types/product";
  */
 
 
-const PRODUCT_REGISTER_ENDPOINT = "/api/admin/products/register";
+const PRODUCT_REGISTER_ENDPOINT = "/api/admin/products/create";
 
 //servicio para registrar productos
 const registerProduct = async (product: Product): Promise<Product> => {

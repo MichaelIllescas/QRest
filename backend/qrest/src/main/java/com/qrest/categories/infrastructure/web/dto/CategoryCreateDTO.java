@@ -20,4 +20,5 @@ public class CategoryCreateDTO {
     @NotBlank(message = "El nombre de la categoria es obligatorio")
     @Size(max = 100, message = "El nombre no puede superar los 100 caracteres")
     String name;
+    boolean active;
 }

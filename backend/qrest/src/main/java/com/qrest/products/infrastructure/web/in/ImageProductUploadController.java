@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/admin/product-images")
-@Tag(name = "Product Images", description = "Endpoints para subir imágenes de productos")
+@Tag(name = "Imagenes de Productos", description = "Endpoints para subir imágenes de productos")
 public class ImageProductUploadController {
 
     private final UploadProductImageUseCase uploadProductImageUseCase;

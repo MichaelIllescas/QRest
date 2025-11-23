@@ -21,7 +21,7 @@ export const useRegisterProduct = () => {
     imageUrl: undefined,
   });
 
-  const { upload, isUploading, error: uploadError } = useUploadImage();
+  const { upload,reset, isUploading, error: uploadError } = useUploadImage();
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
@@ -173,10 +173,14 @@ export const useRegisterProduct = () => {
       setFiles([]);
       setTouched({});
       setValidationErrors({});
+      reset();
 
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : "Error al guardar producto";
-      setSaveError(errorMessage);
+    } catch (err: any) {
+   const backendMessage =
+        err?.response?.data?.message ??
+        err?.response?.data?.error ??
+        err.message ??
+        "Error desconocido";      setSaveError(backendMessage);
     } finally {
       setIsSaving(false);
     }

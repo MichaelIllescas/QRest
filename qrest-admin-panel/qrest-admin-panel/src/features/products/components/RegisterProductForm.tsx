@@ -1,10 +1,13 @@
+import { useEffect } from "react";
 import { FileUpload } from "../../../shared/components/UploadFile";
+import { useListCategory } from "../../categories/hooks/useListCategory";
 import { useRegisterProduct } from "../hooks/useRegisterProduct";
 import styles from "../styles/RegisterProductForm.module.css";
 
 const RegisterProductForm = () => {
   const {
     product,
+    files,
     isSaving,
     saved,
     saveError,
@@ -17,6 +20,12 @@ const RegisterProductForm = () => {
     handleBlur,
     handleSubmit,
   } = useRegisterProduct();
+  const { categories, listCategory } = useListCategory();
+
+  useEffect(() => {
+    listCategory();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
@@ -89,19 +98,6 @@ const RegisterProductForm = () => {
         )}
       </div>
 
-      {/* Campo Disponible */}
-      <div className={styles.checkboxContainer}>
-        <input
-          className={styles.checkbox}
-          name="available"
-          type="checkbox"
-          checked={product.available}
-          onChange={handleChange}
-          id="available-checkbox"
-        />
-        <label htmlFor="available-checkbox">Disponible</label>
-      </div>
-
       {/* Campo Categoría */}
       <div className={styles.fieldContainer}>
         <select
@@ -116,9 +112,11 @@ const RegisterProductForm = () => {
           aria-describedby="category-error"
         >
           <option value="">Seleccione una categoría *</option>
-          <option value="1">Bebidas</option>
-          <option value="2">Pastas</option>
-          <option value="3">Carnes</option>
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.name}
+            </option>
+          ))}
         </select>
         {touched.categoryId && validationErrors.categoryId && (
           <span id="category-error" className={styles.errorText}>
@@ -129,7 +127,7 @@ const RegisterProductForm = () => {
 
       {/* Campo Imagen */}
       <div className={styles.fieldContainer}>
-        <FileUpload onChange={setFiles} helperText="Ingrese una imagen (opcional)" />
+        <FileUpload files={files} onChange={setFiles} helperText="Ingrese una imagen (opcional)" />
       </div>
 
       {/* Botón Submit */}

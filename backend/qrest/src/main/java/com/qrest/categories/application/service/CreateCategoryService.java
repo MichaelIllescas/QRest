@@ -1,9 +1,10 @@
 package com.qrest.categories.application.service;
 
 import com.qrest.categories.application.ports.in.CreateCategoryUseCase;
-import com.qrest.categories.application.ports.out.CategoryRepository;
+import com.qrest.categories.application.ports.out.CategoryRepositoryPort;
 import com.qrest.categories.domain.exception.DuplicateCategoryNameException;
 import com.qrest.categories.domain.model.Category;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,21 +15,28 @@ import org.springframework.stereotype.Service;
 @Service
 public class CreateCategoryService implements CreateCategoryUseCase {
 
-    private final CategoryRepository categoryRepository;
+    private final CategoryRepositoryPort categoryRepositoryPort;
 
-    public CreateCategoryService(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
+    public CreateCategoryService(CategoryRepositoryPort categoryRepositoryPort) {
+        this.categoryRepositoryPort = categoryRepositoryPort;
     }
 
 
     @Override
     public Category createCategory(String name) {
-        if (categoryRepository.existsByName(name)) {
+        String normalized = Category.normalizeNameForPersistence(name);
+        System.out.println("Encontro: " + categoryRepositoryPort.existsByName(normalized));
+        if (categoryRepositoryPort.existsByName(normalized)) {
             throw new DuplicateCategoryNameException(name);
         }
 
         Category category = Category.create(name);
 
-        return categoryRepository.save(category);
+        try {
+            return categoryRepositoryPort.save(category);
+        } catch (DataIntegrityViolationException ex) {
+            // Si la BD lanza una violación de integridad por unique constraint
+            throw new DuplicateCategoryNameException(name);
+        }
     }
 }

@@ -17,4 +17,5 @@ import lombok.Setter;
 public class CategoryResponseDTO {
     Long id;
     String name;
+    boolean active;
 }

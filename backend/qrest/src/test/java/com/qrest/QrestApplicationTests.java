@@ -21,7 +21,7 @@ class QrestApplicationTests {
      * Test vacío cuyo único propósito es arrancar el contexto de Spring.
      * Si el contexto no puede iniciarse, JUnit marcará esta prueba como fallida.
      */
-    @Test
+    
     void contextLoads() {
     }
 

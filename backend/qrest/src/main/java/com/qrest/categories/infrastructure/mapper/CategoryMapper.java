@@ -2,6 +2,7 @@ package com.qrest.categories.infrastructure.mapper;
 
 import com.qrest.categories.domain.model.Category;
 import com.qrest.categories.infrastructure.persistence.entity.CategoryJpaEntity;
+import com.qrest.categories.infrastructure.web.dto.CategoryResponseDTO;
 
 /**
 
@@ -28,6 +29,16 @@ public class CategoryMapper {
                 jpaEntity.getId(),
                 jpaEntity.getName(),
                 jpaEntity.isActive()
+        );
+    }
+    public static CategoryResponseDTO toResponseDTO(Category category) {
+        if (category == null) {
+            return null;
+        }
+        return new CategoryResponseDTO(
+                category.getId(),
+                category.getName(),
+                category.isActive()
         );
     }
 }

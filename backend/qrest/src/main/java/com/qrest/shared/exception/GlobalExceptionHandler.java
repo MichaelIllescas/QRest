@@ -1,13 +1,21 @@
 package com.qrest.shared.exception;
 
+import com.qrest.categories.domain.exception.CategoryNotFoundException;
 import com.qrest.products.domain.exception.ImageEmptyException;
 import com.qrest.products.domain.exception.ImageTooLargeException;
 import com.qrest.products.domain.exception.InvalidImageTypeException;
+import com.qrest.products.domain.exception.ProductIntegrityException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+
+import org.springframework.web.bind.MethodArgumentNotValidException;
+
+import com.qrest.categories.domain.exception.DuplicateCategoryNameException;
+
+import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -37,6 +45,17 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ApiError> handleBadRequest(BadRequestException ex, WebRequest request) {
         return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
+    }
+
+    //  400 — Method argument not valid (validation errors)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiError> handleValidation(MethodArgumentNotValidException ex, WebRequest request) {
+        String message = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(err -> err.getField() + ": " + err.getDefaultMessage())
+                .collect(Collectors.joining("; "));
+        return buildResponse(HttpStatus.BAD_REQUEST, message, request);
     }
 
     //  401 — Unauthorized
@@ -69,4 +88,21 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.UNSUPPORTED_MEDIA_TYPE, ex.getMessage(), request);
     }
 
+    // 409 — Conflict (nombre duplicado de categoría)
+    @ExceptionHandler(DuplicateCategoryNameException.class)
+    public ResponseEntity<ApiError> handleDuplicateCategoryName(DuplicateCategoryNameException ex, WebRequest request) {
+        return buildResponse(HttpStatus.CONFLICT, ex.getMessage(), request);
+    }
+
+    // 404 — Not Found (categoría no encontrada)
+    @ExceptionHandler(CategoryNotFoundException.class)
+    public ResponseEntity<ApiError> handleCategoryNotFound(CategoryNotFoundException ex, WebRequest request) {
+        return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage(), request);
+    }
+
+    // 400 — Bad Request (integridad del producto)
+    @ExceptionHandler(ProductIntegrityException.class)
+    public ResponseEntity<ApiError> handleProductIntegrity(ProductIntegrityException ex, WebRequest request) {
+        return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
+    }
 }

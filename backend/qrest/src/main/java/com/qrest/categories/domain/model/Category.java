@@ -13,7 +13,6 @@ public class Category {
     private Long id;
     private String name;
     private boolean active;
-
     private Category() {
 
     }
@@ -21,7 +20,7 @@ public class Category {
     public  Category(Long id, String name, boolean active) {
         validateName(name);
         this.id = id;
-        this.name = normalizeName(name);
+        this.name = normalizeNameForPersistence(name);
         this.active = active;
     }
 
@@ -46,7 +45,9 @@ public class Category {
         }
     }
 
-    private String normalizeName(String name) {
+    // Método público estático para normalizar el nombre consistentemente antes de guardar/buscar
+    public static String normalizeNameForPersistence(String name) {
+        if (name == null) return null;
         String trimmed = name.trim();
         if (trimmed.isEmpty()) {
             return trimmed;
@@ -56,7 +57,7 @@ public class Category {
 
     public void changeName(String newName) {
         validateName(newName);
-        this.name = normalizeName(newName);
+        this.name = normalizeNameForPersistence(newName);
     }
     public void activate() {
         this.active = true;
