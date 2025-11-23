@@ -27,3 +27,8 @@ database/
 *.db
 *.sqlite
 
+TestResults.xml
+# Environment settings file
+.env
+
+coverage/

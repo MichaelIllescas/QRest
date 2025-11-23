@@ -1,30 +1,161 @@
-import React from 'react';
-import Container from '../shared/components/Container';
-import '../shared/styles/PageLayout.css';
+import React, { useEffect, useState } from "react";
+import Container from "../shared/components/Container";
+import "../shared/styles/PageLayout.css";
+import RegisterCategoryForm from "../features/categories/components/RegisterCategoryForm";
+import { Table } from "../shared/components/Table/Table";
+import type { TableColumn } from "../shared/components/Table/table.types";
+import type { Category } from "../features/categories/types/category";
+import { useListCategory } from "../features/categories/hooks/useListCategory";
+import { AlertModal } from "../shared/components/Alert/AlertModal";
+import { useDeleteCategory } from "../features/categories/hooks/useDeleteCategory";
+import { Alert } from "../shared/components/Alert/Alert";
 
 const Categories: React.FC = () => {
+  const [formRegisterOpen, setFormRegisterOpen] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState<number | null>(null);
+  
+  const { categories, loading, error, setError, listCategory } = useListCategory();
+  const { 
+    deleteCategory, 
+    loading: deleteLoading, 
+    error: deleteError, 
+    deleted,
+    setError: setDeleteError 
+  } = useDeleteCategory();
+
+  const columns: TableColumn<Category>[] = [
+    { key: "id", label: "ID" },
+    { key: "name", label: "Nombre" },
+    {
+      key: "active",
+      label: "Activa",
+      render: (value) => (value ? "Sí" : "No"),
+    },
+  ];
+  const mockCategories: Category[] = [
+    { id: 1, name: "Entrantes",  active: true },
+    { id: 2, name: "Platos Principales", active: true },
+    { id: 3, name: "Postres", active: false },
+  ];
+
+  useEffect(() => {
+    listCategory();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Container size="xl" className="py-6">
       {/* Sección de título estandarizada */}
       <div className="page-header">
-        <h1 className="page-title">
-          Categorías
-        </h1>
+        <h1 className="page-title">Categorías</h1>
         <p className="page-description">
-          Aquí va el título principal de la sección Categorías
+          Gestiona las categorías de tu carta digital
         </p>
       </div>
-      
+
       {/* Área de contenido estandarizada */}
       <div className="page-content">
-        <div className="content-placeholder">
-          <div className="placeholder-content">
-            <div className="placeholder-icon">📂</div>
-            <h3 className="placeholder-title">Contenido de Categorías</h3>
-            <p className="placeholder-text">Aquí va a ir el contenido principal de las Categorías</p>
+        <div>
+          <div className="container-button-manager">
+            <button
+              className="btn btn-primary mb-4"
+              onClick={() => {
+                setFormRegisterOpen(!formRegisterOpen);
+                setError(null);
+                if (formRegisterOpen) {
+                  listCategory();
+                }
+              }}
+            >
+              {formRegisterOpen ? "Ver Listado" : "Registrar Nueva Categoría"}
+            </button>
           </div>
+
+          {/* Mostrar error de listado */}
+          {error && (
+            <div className="error-message">
+              <strong>Error:</strong> {error.message}
+            </div>
+          )}
+
+          {/* Mostrar error de eliminación */}
+          {deleteError && (
+            <Alert
+              variant="error"
+              title="Error al Eliminar la categoría"
+              closable
+              onClose={() => setDeleteError(null)}
+            >
+              {deleteError.message}
+            </Alert>
+          )}
+
+          {/* Mostrar éxito de eliminación */}
+          {deleted && (
+            <Alert
+              variant="success"
+              title="Categoría Eliminada"
+              closable
+              onClose={() => listCategory()}
+            >
+              La categoría ha sido eliminada exitosamente.
+            </Alert>
+          )}
+
+          {/* Mostrar loading */}
+          {loading && (
+            <div className="loading-message">
+              <p>Cargando categorías...</p>
+            </div>
+          )}
+
+          {/* Mostrar tabla siempre que no esté el formulario abierto */}
+          {!formRegisterOpen && !loading && (
+            <Table<Category>
+              columns={columns}
+              data={categories}
+              mode="full"
+              variant="compact"
+              itemsPerPage={4}
+              title="Listado de Categorías"
+              actions={(row: Category) => (
+                <>
+                  <button className="btn btn-secondary">📝</button>
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => setCategoryToDelete(row.id!)}
+                    disabled={deleteLoading}
+                  >
+                    🗑️
+                  </button>
+                </>
+              )}
+            ></Table>
+          )}
+          {formRegisterOpen && <RegisterCategoryForm />}
         </div>
       </div>
+
+      <AlertModal
+        title="Eliminar Categoría"
+        variant="error"
+        isOpen={categoryToDelete !== null}
+        onClose={() => {
+          setCategoryToDelete(null);
+          setDeleteError(null);
+        }}
+        onConfirm={async () => {
+          if (categoryToDelete !== null) {
+            await deleteCategory(categoryToDelete);
+            setCategoryToDelete(null);
+            listCategory();
+          }
+        }}
+        showCancelButton
+        confirmText={deleteLoading ? "Eliminando..." : "Eliminar"}
+      >
+        ¿Estás seguro de que deseas eliminar esta categoría?
+      </AlertModal>
     </Container>
   );
 };
