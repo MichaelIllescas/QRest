@@ -58,6 +58,12 @@
             <artifactId>sqlite-jdbc</artifactId>
         </dependency>
 
+        <!-- Validation (Bean Validation Provider) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-community-dialects</artifactId>

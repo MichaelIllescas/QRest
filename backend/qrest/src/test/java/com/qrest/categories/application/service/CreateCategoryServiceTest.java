@@ -1,6 +1,6 @@
 package com.qrest.categories.application.service;
 
-import com.qrest.categories.application.ports.out.CategoryRepository;
+import com.qrest.categories.application.ports.out.CategoryRepositoryPort;
 import com.qrest.categories.domain.exception.DuplicateCategoryNameException;
 import com.qrest.categories.domain.model.Category;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 public class CreateCategoryServiceTest {
 
     @Mock
-    private CategoryRepository categoryRepository;
+    private CategoryRepositoryPort categoryRepository;
 
     @InjectMocks
     private CreateCategoryService createCategoryService;
@@ -31,8 +31,9 @@ public class CreateCategoryServiceTest {
     @Test
     void createCategory_WhenNameIsValid_ShouldCreateSuccessFully() {
         String categoryName = "Pastas";
+        String normalized = com.qrest.categories.domain.model.Category.normalizeNameForPersistence(categoryName);
         Category expectedCategory = Category.reconstitute(1L, "Pastas", true);
-        when(categoryRepository.existsByName(categoryName)).thenReturn(false);
+        when(categoryRepository.existsByName(normalized)).thenReturn(false);
         when(categoryRepository.save(any(Category.class))).thenReturn(expectedCategory);
 
         Category result = createCategoryService.createCategory(categoryName);
@@ -42,28 +43,30 @@ public class CreateCategoryServiceTest {
         assertEquals("Pastas", result.getName());
         assertTrue(result.isActive());
 
-        verify(categoryRepository, times(1)).existsByName(categoryName);
+        verify(categoryRepository, times(2)).existsByName(normalized);
         verify(categoryRepository, times(1)).save(any(Category.class));
     }
     @Test
     void setCreateCategory_WhenNameAlreadyExists_ShouldThrowDuplicateCategoryNameException() {
         String categoryName = "pastas";
-        when(categoryRepository.existsByName(categoryName)).thenReturn(true);
+        String normalized = com.qrest.categories.domain.model.Category.normalizeNameForPersistence(categoryName);
+        when(categoryRepository.existsByName(normalized)).thenReturn(true);
 
         assertThrows(DuplicateCategoryNameException.class, () -> {
             createCategoryService.createCategory(categoryName);
         });
 
-        verify(categoryRepository, times(1)).existsByName(categoryName);
+        verify(categoryRepository, times(2)).existsByName(normalized);
         verify(categoryRepository, never()).save(any(Category.class));
     }
 
     @Test
     void createCategory_shouldNormalizeName() {
         String categoryName = " pAsTas ";
+        String normalized = com.qrest.categories.domain.model.Category.normalizeNameForPersistence(categoryName);
         Category expectedCategory = Category.reconstitute(1L, "Pastas", true);
 
-        when(categoryRepository.existsByName(categoryName)).thenReturn(false);
+        when(categoryRepository.existsByName(normalized)).thenReturn(false);
         when(categoryRepository.save(any(Category.class))).thenReturn(expectedCategory);
 
         Category result = createCategoryService.createCategory(categoryName);
