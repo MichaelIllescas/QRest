@@ -4,6 +4,7 @@ import com.qrest.categories.domain.exception.CategoryNotFoundException;
 import com.qrest.products.domain.exception.ImageEmptyException;
 import com.qrest.products.domain.exception.ImageTooLargeException;
 import com.qrest.products.domain.exception.InvalidImageTypeException;
+import com.qrest.products.domain.exception.ProductIntegrityException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -97,5 +98,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CategoryNotFoundException.class)
     public ResponseEntity<ApiError> handleCategoryNotFound(CategoryNotFoundException ex, WebRequest request) {
         return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage(), request);
+    }
+
+    // 400 — Bad Request (integridad del producto)
+    @ExceptionHandler(ProductIntegrityException.class)
+    public ResponseEntity<ApiError> handleProductIntegrity(ProductIntegrityException ex, WebRequest request) {
+        return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
     }
 }
