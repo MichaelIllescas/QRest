@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { FileUploadItem, FileType, UseFileUploadOptions } from "./types";
 
 export const useFileUpload = (
@@ -8,6 +8,7 @@ export const useFileUpload = (
     maxSize = 10485760,
     maxFiles = 5,
     showPreview = true,
+    externalFiles = [],
     onChange,
     onError,
     onRemove,
@@ -15,6 +16,20 @@ export const useFileUpload = (
 ) => {
   const [files, setFiles] = useState<FileUploadItem[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
+
+  // Sincronizar con archivos externos (reseteo desde el padre)
+  useEffect(() => {
+    if (externalFiles.length === 0 && files.length > 0) {
+      // Limpiar las URLs de vista previa antes de resetear
+      files.forEach(f => {
+        if (f.preview) {
+          URL.revokeObjectURL(f.preview);
+        }
+      });
+      setFiles([]);
+      setErrorMessage("");
+    }
+  }, [externalFiles.length]);
 
   const validateFile = (file: File): string | null => {
     if (file.size > maxSize) {

@@ -1,8 +1,7 @@
 package com.qrest.products.infrastructure.mapper;
 
-import com.qrest.categories.application.ports.out.CategoryRepositoryPort;
 import com.qrest.categories.domain.model.Category;
-import com.qrest.categories.infrastructure.persistence.repository.CategoryRepositoryPortAdapter;
+import com.qrest.categories.infrastructure.persistence.repository.CategoryRepositoryAdapter;
 import com.qrest.products.domain.model.Product;
 import com.qrest.products.infrastructure.persistence.entity.ProductEntity;
 import com.qrest.products.infrastructure.web.dto.CreateProductRequestDTO;
@@ -19,9 +18,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProductMapperImpl implements ProductMapper {
 
-    private final CategoryRepositoryPortAdapter categoryRepository;
+    private final CategoryRepositoryAdapter categoryRepository;
 
-    public ProductMapperImpl(CategoryRepositoryPortAdapter categoryRepository) {
+    public ProductMapperImpl(CategoryRepositoryAdapter categoryRepository) {
         this.categoryRepository = categoryRepository;
     }
 

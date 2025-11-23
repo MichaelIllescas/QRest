@@ -35,6 +35,7 @@ export interface FileUploadProps {
   helperText?: string;
   error?: string;
   className?: string;
+  files?: File[];
 
   onChange?: (files: File[]) => void;
   onError?: (message: string) => void;
