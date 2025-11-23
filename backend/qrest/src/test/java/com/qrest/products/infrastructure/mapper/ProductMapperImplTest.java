@@ -1,6 +1,6 @@
 package com.qrest.products.infrastructure.mapper;
 
-import com.qrest.categories.infrastructure.persistence.repository.CategoryRepositoryPortAdapter;
+import com.qrest.categories.infrastructure.persistence.repository.CategoryRepositoryAdapter;
 import com.qrest.categories.domain.model.Category;
 import com.qrest.products.domain.exception.ProductIntegrityException;
 import com.qrest.products.domain.model.Product;
@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
 class ProductMapperImplTest {
 
     @Mock
-    private CategoryRepositoryPortAdapter categoryRepository;
+    private CategoryRepositoryAdapter categoryRepository;
 
     private ProductMapperImpl mapper;
 

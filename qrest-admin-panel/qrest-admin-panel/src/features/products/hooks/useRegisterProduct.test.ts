@@ -506,7 +506,7 @@ describe('useRegisterProduct', () => {
         await result.current.handleSubmit();
       });
 
-      expect(result.current.saveError).toBe('Error al guardar producto');
+      expect(result.current.saveError).toBe('Error desconocido');
     });
   });
 

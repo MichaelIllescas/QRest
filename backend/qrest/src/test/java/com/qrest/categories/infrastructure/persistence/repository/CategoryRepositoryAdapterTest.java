@@ -27,7 +27,7 @@ class CategoryRepositoryAdapterTest {
     private CategoryJpaRepository jpaRepository;
 
     @InjectMocks
-    private CategoryRepositoryPortAdapter categoryRepository;
+    private CategoryRepositoryAdapter categoryRepository;
 
     @Test
     void save_ShouldPersistCategory() {

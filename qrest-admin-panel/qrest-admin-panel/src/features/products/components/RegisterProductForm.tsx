@@ -5,6 +5,7 @@ import styles from "../styles/RegisterProductForm.module.css";
 const RegisterProductForm = () => {
   const {
     product,
+    files,
     isSaving,
     saved,
     saveError,
@@ -89,19 +90,6 @@ const RegisterProductForm = () => {
         )}
       </div>
 
-      {/* Campo Disponible */}
-      <div className={styles.checkboxContainer}>
-        <input
-          className={styles.checkbox}
-          name="available"
-          type="checkbox"
-          checked={product.available}
-          onChange={handleChange}
-          id="available-checkbox"
-        />
-        <label htmlFor="available-checkbox">Disponible</label>
-      </div>
-
       {/* Campo Categoría */}
       <div className={styles.fieldContainer}>
         <select
@@ -129,7 +117,7 @@ const RegisterProductForm = () => {
 
       {/* Campo Imagen */}
       <div className={styles.fieldContainer}>
-        <FileUpload onChange={setFiles} helperText="Ingrese una imagen (opcional)" />
+        <FileUpload files={files} onChange={setFiles} helperText="Ingrese una imagen (opcional)" />
       </div>
 
       {/* Botón Submit */}

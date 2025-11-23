@@ -23,6 +23,7 @@ export interface UseFileUploadOptions {
   maxSize?: number;
   maxFiles?: number;
   showPreview?: boolean;
+  externalFiles?: File[];
   onChange?: (files: File[]) => void;
   onError?: (message: string) => void;
   onRemove?: (file: File) => void;

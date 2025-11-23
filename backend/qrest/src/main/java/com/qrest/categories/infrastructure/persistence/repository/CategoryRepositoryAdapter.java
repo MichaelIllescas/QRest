@@ -16,12 +16,12 @@ import java.util.Optional;
  */
 
 @Component
-public class CategoryRepositoryPortAdapter implements CategoryRepositoryPort {
+public class CategoryRepositoryAdapter implements CategoryRepositoryPort {
 
     private final CategoryJpaRepository jpaRepository;
 
 
-    public CategoryRepositoryPortAdapter(CategoryJpaRepository jpaRepository) {
+    public CategoryRepositoryAdapter(CategoryJpaRepository jpaRepository) {
         this.jpaRepository = jpaRepository;
     }
 
