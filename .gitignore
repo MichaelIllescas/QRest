@@ -19,6 +19,14 @@ rad.json
 #License-file
 *.flf
 #Test results file
+TestResults.xml# IntelliJ
+.idea/
+
+# SQLite local file
+database/
+*.db
+*.sqlite
+
 TestResults.xml
 # Environment settings file
 .env
