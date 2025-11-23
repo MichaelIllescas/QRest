@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { FileUpload } from "../../../shared/components/UploadFile";
+import { useListCategory } from "../../categories/hooks/useListCategory";
 import { useRegisterProduct } from "../hooks/useRegisterProduct";
 import styles from "../styles/RegisterProductForm.module.css";
 
@@ -18,6 +20,12 @@ const RegisterProductForm = () => {
     handleBlur,
     handleSubmit,
   } = useRegisterProduct();
+  const { categories, listCategory } = useListCategory();
+
+  useEffect(() => {
+    listCategory();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
@@ -104,9 +112,11 @@ const RegisterProductForm = () => {
           aria-describedby="category-error"
         >
           <option value="">Seleccione una categoría *</option>
-          <option value="1">Bebidas</option>
-          <option value="2">Pastas</option>
-          <option value="3">Carnes</option>
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.name}
+            </option>
+          ))}
         </select>
         {touched.categoryId && validationErrors.categoryId && (
           <span id="category-error" className={styles.errorText}>
