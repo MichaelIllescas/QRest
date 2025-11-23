@@ -54,7 +54,7 @@ public class CategoryController {
     private final UpdateCategoryUseCase updateCategoryUseCase;
 
 
-    public CategoryController(CreateCategoryUseCase createCategoryUseCase, GetAllCategoriesUseCase getAllCategoriesUseCase,  UpdateCategoryUseCase updateCategoryUseCase;
+    public CategoryController(CreateCategoryUseCase createCategoryUseCase, GetAllCategoriesUseCase getAllCategoriesUseCase,  UpdateCategoryUseCase updateCategoryUseCase
 ) {
         this.createCategoryUseCase = createCategoryUseCase;
         this.getAllCategoriesUseCase = getAllCategoriesUseCase;
@@ -113,7 +113,7 @@ public class CategoryController {
             @Valid @RequestBody CategoryUpdateDTO request
             ) {
         Category category = updateCategoryUseCase.updateCategory(id, request.getName());
-        CategoryResponseDTO response = new CategoryResponseDTO(category.getId(), category.getName());
+        CategoryResponseDTO response = new CategoryResponseDTO(category.getId(), category.getName(), category.isActive());
         return ResponseEntity.ok(response);
     }
 

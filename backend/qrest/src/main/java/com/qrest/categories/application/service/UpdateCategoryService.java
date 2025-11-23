@@ -1,7 +1,8 @@
 package com.qrest.categories.application.service;
 
 import com.qrest.categories.application.ports.in.UpdateCategoryUseCase;
-import com.qrest.categories.application.ports.out.CategoryRepository;
+import com.qrest.categories.application.ports.out.CategoryRepositoryPort;
+import com.qrest.categories.application.ports.out.CategoryRepositoryPort;
 import com.qrest.categories.domain.exception.CategoryNotFoundException;
 import com.qrest.categories.domain.exception.DuplicateCategoryNameException;
 import com.qrest.categories.domain.model.Category;
@@ -16,10 +17,10 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class UpdateCategoryService implements UpdateCategoryUseCase {
 
-    private final CategoryRepository categoryRepository;
+    private final CategoryRepositoryPort categoryRepository;
 
 
-    public UpdateCategoryService(CategoryRepository categoryRepository) {
+    public UpdateCategoryService(CategoryRepositoryPort categoryRepository) {
         this.categoryRepository = categoryRepository;
 
     }
