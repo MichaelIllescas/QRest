@@ -6,7 +6,7 @@ import { apiClient } from '../../../app/config/api/apiClient';
 import type { Category } from '../types/category';
 
 //URL DE LOS ENPOINTS
-const CREATE_CATEGORY_URL = '/api/admin/categories/create';
+const CREATE_CATEGORY_URL = '/api/admin/categories/categories';
 const GET_CATEGORIES_URL = '/api/admin/categories/list';
 const DELETE_CATEGORY_URL = '/api/admin/categories/delete/{id}';
 

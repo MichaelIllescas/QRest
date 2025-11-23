@@ -1,11 +1,17 @@
 package com.qrest.categories.infrastructure.web.in;
 
 import com.qrest.categories.application.ports.in.CreateCategoryUseCase;
+import com.qrest.categories.application.ports.in.UpdateCategoryUseCase;
 import com.qrest.categories.application.ports.in.GetAllCategoriesUseCase;
 import com.qrest.categories.domain.model.Category;
 import com.qrest.categories.infrastructure.mapper.CategoryMapper;
 import com.qrest.categories.infrastructure.web.dto.CategoryCreateDTO;
 import com.qrest.categories.infrastructure.web.dto.CategoryResponseDTO;
+import com.qrest.categories.infrastructure.web.dto.CategoryUpdateDTO;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import com.qrest.shared.exception.ApiError;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -45,10 +51,15 @@ public class CategoryController {
     private final CreateCategoryUseCase createCategoryUseCase;
     private final GetAllCategoriesUseCase getAllCategoriesUseCase;
     private CategoryMapper categoryMapper;
+    private final UpdateCategoryUseCase updateCategoryUseCase;
 
-    public CategoryController(CreateCategoryUseCase createCategoryUseCase, GetAllCategoriesUseCase getAllCategoriesUseCase) {
+
+    public CategoryController(CreateCategoryUseCase createCategoryUseCase, GetAllCategoriesUseCase getAllCategoriesUseCase,  UpdateCategoryUseCase updateCategoryUseCase;
+) {
         this.createCategoryUseCase = createCategoryUseCase;
         this.getAllCategoriesUseCase = getAllCategoriesUseCase;
+        this.updateCategoryUseCase=  updateCategoryUseCase;
+
     }
 
     @PostMapping("/create")
@@ -93,6 +104,17 @@ public class CategoryController {
                 .map(CategoryMapper::toResponseDTO)
                 .collect(toList());
         return categoriesRespose;
+    }
+  
+  
+    @PutMapping("/{id}")
+    public ResponseEntity<CategoryResponseDTO> updateCategory(
+            @PathVariable Long id,
+            @Valid @RequestBody CategoryUpdateDTO request
+            ) {
+        Category category = updateCategoryUseCase.updateCategory(id, request.getName());
+        CategoryResponseDTO response = new CategoryResponseDTO(category.getId(), category.getName());
+        return ResponseEntity.ok(response);
     }
 
 
