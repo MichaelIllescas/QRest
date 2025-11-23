@@ -22,6 +22,9 @@ export interface Product {
   /** URL de la imagen del producto (opcional) */
   imageUrl?: string;
 
-  /** Categoría del producto, si deseas incluirla */
+  /** Id Categoría del producto */
   categoryId?: number;
+
+  /** Nombre de la categoría (opcional, para facilitar la visualización) */
+  categoryName?: string;
 }

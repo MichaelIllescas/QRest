@@ -8,6 +8,7 @@ const RegisterProductForm = () => {
   const {
     product,
     files,
+    withImage,
     isSaving,
     saved,
     saveError,
@@ -16,11 +17,13 @@ const RegisterProductForm = () => {
     validationErrors,
     touched,
     setFiles,
+    setWithImage,
     handleChange,
     handleBlur,
     handleSubmit,
   } = useRegisterProduct();
   const { categories, listCategory } = useListCategory();
+  
 
   useEffect(() => {
     listCategory();
@@ -127,7 +130,28 @@ const RegisterProductForm = () => {
 
       {/* Campo Imagen */}
       <div className={styles.fieldContainer}>
-        <FileUpload files={files} onChange={setFiles} helperText="Ingrese una imagen (opcional)" />
+        <div className={styles.checkboxContainer}>
+          <label className={styles.checkboxLabel}>
+            <input
+              type="checkbox"
+              className={styles.checkboxInput}
+              checked={withImage}
+              onChange={() => setWithImage(!withImage)}
+            />
+            <span className={styles.toggleSwitch}></span>
+            <span className={styles.toggleText}>Incluir imagen</span>
+          </label>
+        </div>
+        {withImage && (
+          <>
+            <FileUpload files={files} onChange={setFiles} helperText="Seleccione una imagen *" />
+            {touched.image && validationErrors.image && (
+              <span id="image-error" className={styles.errorText}>
+                {validationErrors.image}
+              </span>
+            )}
+          </>
+        )}
       </div>
 
       {/* Botón Submit */}

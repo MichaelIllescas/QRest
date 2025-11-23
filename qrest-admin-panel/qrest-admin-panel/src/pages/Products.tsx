@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Container from "../shared/components/Container";
 import "../shared/styles/PageLayout.css";
 import { Table } from "../shared/components/Table/Table";
+import type { TableColumn } from "../shared/components/Table/table.types";
 import RegisterProductForm from "../features/products/components/RegisterProductForm";
 import type { Product } from "../features/products/types/product";
+import { useListProducts } from "../features/products/hooks/useListProducts";
 
 const Products: React.FC = () => {
   const [formRegisterOpen, setFormRegisterOpen] = useState(false);
+  const { products, isLoading, error, fetchProducts } = useListProducts();
 
   const columns: TableColumn<Product>[] = [
     { key: "id", label: "ID" },
@@ -18,67 +21,19 @@ const Products: React.FC = () => {
       label: "Disponible",
       render: (value: boolean) => (value ? "Sí" : "No"),
     },
-    { key: "categoryId", label: "Categoría" },
+    { key: "categoryName", label: "Categoría" },
     { key: "imageUrl", label: "Imagen" },
   ];
 
-  const data: Product[] = [
-    {
-      id: 1,
-      name: "Juan",
-      description: "Producto 1",
-      price: 10,
-      available: true,
-      categoryId: 1,
-      imageUrl: "url1",
-    },
-    {
-      id: 2,
-      name: "María",
-      description: "Producto 2",
-      price: 20,
-      available: false,
-      categoryId: 2,
-      imageUrl: "url2",
-    },
-    {
-      id: 2,
-      name: "María",
-      description: "Producto 2",
-      price: 20,
-      available: false,
-      categoryId: 2,
-      imageUrl: "url2",
-    },
-    {
-      id: 2,
-      name: "María",
-      description: "Producto 2",
-      price: 20,
-      available: false,
-      categoryId: 2,
-      imageUrl: "url2",
-    },
-    {
-      id: 2,
-      name: "María",
-      description: "Producto 2",
-      price: 20,
-      available: false,
-      categoryId: 2,
-      imageUrl: "url2",
-    },
-    {
-      id: 2,
-      name: "María",
-      description: "Producto 2",
-      price: 20,
-      available: false,
-      categoryId: 2,
-      imageUrl: "url2",
-    },
-  ];
 
+
+
+  useEffect(() => {
+
+    fetchProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  
   return (
     <Container size="xl" className="py-6">
       {/* Sección de título estandarizada */}
@@ -102,22 +57,31 @@ const Products: React.FC = () => {
             </button>
           </div>
 
-          {!formRegisterOpen && (
-            <Table
-              columns={columns}
-              data={data}
-              mode="full"
-              itemsPerPage={4}
-              title="Listado de Productos"
-              actions={(row: Product) => (
-                <>
-                  <button className="btn btn-secondary">📝</button>
-                  <button className="btn btn-danger">🗑️</button>
-                </>
-              )}
-            ></Table>
-          )}
-          {formRegisterOpen && <RegisterProductForm />}
+          {!formRegisterOpen &&
+
+            
+
+            (isLoading ? (
+              <p>Cargando productos...</p>
+            ) : error ? (
+              <p className="text-danger">{error}</p>
+            ) : (
+             
+              <Table
+                columns={columns}
+                data={products}
+                mode="full"
+                itemsPerPage={4}
+                title="Listado de Productos"
+                actions={(row: Product) => (
+                  <>
+                    <button className="btn btn-secondary">📝</button>
+                    <button className="btn btn-danger">🗑️</button>
+                  </>
+                )}
+              ></Table>
+            ))}
+          {formRegisterOpen && <RegisterProductForm onSuccess={fetchProducts} />}
         </div>
       </div>
     </Container>

@@ -1,17 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useUploadImage } from "./useUploadImage";
 import type { Product } from "../types/product";
 import { productService } from "../api/ProductService";
+
 
 interface ValidationErrors {
   name?: string;
   price?: string;
   categoryId?: string;
   description?: string;
+  image?: string;
 }
 
 export const useRegisterProduct = () => {
   const [files, setFiles] = useState<File[]>([]);
+  const [withImage, setWithImage] = useState(false);
   const [product, setProduct] = useState<Product>({
     name: "",
     description: "",
@@ -93,6 +96,11 @@ export const useRegisterProduct = () => {
     const categoryError = validateField("categoryId", product.categoryId);
     if (categoryError) errors.categoryId = categoryError;
 
+    // Validar imagen si withImage está activado
+    if (withImage && files.length === 0) {
+      errors.image = "Debe seleccionar una imagen";
+    }
+
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -128,6 +136,23 @@ export const useRegisterProduct = () => {
     }));
   };
 
+  // Validar imagen cuando cambian los archivos o el estado de withImage
+  useEffect(() => {
+    if (touched.image) {
+      if (withImage && files.length === 0) {
+        setValidationErrors(prev => ({
+          ...prev,
+          image: "Debe seleccionar una imagen",
+        }));
+      } else {
+        setValidationErrors(prev => ({
+          ...prev,
+          image: undefined,
+        }));
+      }
+    }
+  }, [files, withImage, touched.image]);
+
   const handleSubmit = async () => {
     // Marcar todos los campos como tocados
     setTouched({
@@ -135,6 +160,7 @@ export const useRegisterProduct = () => {
       price: true,
       categoryId: true,
       description: true,
+      image: true,
     });
 
     // Validar formulario completo
@@ -148,13 +174,18 @@ export const useRegisterProduct = () => {
       setSaveError(null);
       setSaved(false);
 
-      // 1) Subir imagen
-      const img = await upload(files);
+      let imageUrl = undefined;
+
+      // 1) Subir imagen solo si withImage está activado y hay archivos
+      if (withImage && files.length > 0) {
+        const img = await upload(files);
+        imageUrl = img.imageUrl;
+      }
 
       // 2) Crear producto final
       const finalProduct: Product = {
         ...product,
-        imageUrl: img.imageUrl,
+        imageUrl,
       };
 
       // 3) Enviar al backend
@@ -171,6 +202,7 @@ export const useRegisterProduct = () => {
         imageUrl: undefined,
       });
       setFiles([]);
+      setWithImage(false);
       setTouched({});
       setValidationErrors({});
       reset();
@@ -189,6 +221,7 @@ export const useRegisterProduct = () => {
   return {
     product,
     files,
+    withImage,
     isSaving,
     saved,
     saveError,
@@ -197,6 +230,7 @@ export const useRegisterProduct = () => {
     validationErrors,
     touched,
     setFiles,
+    setWithImage,
     handleChange,
     handleBlur,
     handleSubmit,

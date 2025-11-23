@@ -34,6 +34,9 @@ describe('useRegisterProduct', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockUpload.mockReset();
+    mockReset.mockReset();
+    mockedProductService.create.mockReset();
     
     // Configurar mock de useUploadImage con valores por defecto
     mockedUseUploadImage.mockReturnValue({
@@ -61,6 +64,7 @@ describe('useRegisterProduct', () => {
         imageUrl: undefined,
       });
       expect(result.current.files).toEqual([]);
+      expect(result.current.withImage).toBe(false);
       expect(result.current.isSaving).toBe(false);
       expect(result.current.saved).toBe(false);
       expect(result.current.saveError).toBeNull();
@@ -273,6 +277,7 @@ describe('useRegisterProduct', () => {
       const files = [createMockFile('pizza.jpg', 1024, 'image/jpeg')];
       act(() => {
         result.current.setFiles(files);
+        result.current.setWithImage(true);
       });
 
       // Ejecutar submit
@@ -329,6 +334,7 @@ describe('useRegisterProduct', () => {
       const files = [createMockFile('burger.jpg', 1024, 'image/jpeg')];
       act(() => {
         result.current.setFiles(files);
+        result.current.setWithImage(true);
       });
 
       await act(async () => {
@@ -346,8 +352,10 @@ describe('useRegisterProduct', () => {
     });
 
     it('debe resetear saved y saveError al inicio del submit', async () => {
-      mockUpload.mockResolvedValue({ imageUrl: 'url' });
-      mockedProductService.create.mockResolvedValue({} as Product);
+      mockUpload.mockResolvedValueOnce({ imageUrl: 'url' });
+      mockUpload.mockResolvedValueOnce({ imageUrl: 'url2' });
+      mockedProductService.create.mockResolvedValueOnce({} as Product);
+      mockedProductService.create.mockResolvedValueOnce({} as Product);
 
       const { result } = renderHook(() => useRegisterProduct());
 
@@ -367,6 +375,7 @@ describe('useRegisterProduct', () => {
       const files = [createMockFile('image.jpg', 1024, 'image/jpeg')];
       act(() => {
         result.current.setFiles(files);
+        result.current.setWithImage(true);
       });
 
       // Primer submit exitoso
@@ -388,6 +397,7 @@ describe('useRegisterProduct', () => {
           target: { name: 'categoryId', value: '2', type: 'select-one' },
         } as React.ChangeEvent<HTMLSelectElement>);
         result.current.setFiles(files);
+        result.current.setWithImage(true);
       });
 
       // Segundo submit
@@ -426,6 +436,7 @@ describe('useRegisterProduct', () => {
       const files = [createMockFile('image.jpg', 1024, 'image/jpeg')];
       act(() => {
         result.current.setFiles(files);
+        result.current.setWithImage(true);
       });
 
       await act(async () => {
@@ -468,6 +479,7 @@ describe('useRegisterProduct', () => {
       const files = [createMockFile('image.jpg', 1024, 'image/jpeg')];
       act(() => {
         result.current.setFiles(files);
+        result.current.setWithImage(true);
       });
 
       await act(async () => {
@@ -500,6 +512,7 @@ describe('useRegisterProduct', () => {
       const files = [createMockFile('image.jpg', 1024, 'image/jpeg')];
       act(() => {
         result.current.setFiles(files);
+        result.current.setWithImage(true);
       });
 
       await act(async () => {
@@ -625,6 +638,7 @@ describe('useRegisterProduct', () => {
       const files = [createMockFile('image.jpg', 1024, 'image/jpeg')];
       act(() => {
         result.current.setFiles(files);
+        result.current.setWithImage(true);
       });
 
       await act(async () => {
@@ -681,6 +695,7 @@ describe('useRegisterProduct', () => {
       const files = [createMockFile('pizza.jpg', 2048, 'image/jpeg')];
       act(() => {
         result.current.setFiles(files);
+        result.current.setWithImage(true);
       });
 
       // Paso 3: Enviar
@@ -1045,6 +1060,7 @@ describe('useRegisterProduct', () => {
       const files = [createMockFile('image.jpg', 1024, 'image/jpeg')];
       act(() => {
         result.current.setFiles(files);
+        result.current.setWithImage(true);
       });
 
       await act(async () => {
@@ -1085,6 +1101,7 @@ describe('useRegisterProduct', () => {
           target: { name: 'categoryId', value: '1', type: 'select-one' },
         } as React.ChangeEvent<HTMLSelectElement>);
         result.current.setFiles([createMockFile('image.jpg', 1024, 'image/jpeg')]);
+        result.current.setWithImage(true);
       });
 
       await act(async () => {
@@ -1127,6 +1144,7 @@ describe('useRegisterProduct', () => {
           target: { name: 'categoryId', value: '1', type: 'select-one' },
         } as React.ChangeEvent<HTMLSelectElement>);
         result.current.setFiles([createMockFile('image.jpg', 1024, 'image/jpeg')]);
+        result.current.setWithImage(true);
       });
 
       await act(async () => {
