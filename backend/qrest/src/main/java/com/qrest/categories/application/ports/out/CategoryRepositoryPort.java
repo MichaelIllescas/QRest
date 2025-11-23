@@ -2,6 +2,7 @@ package com.qrest.categories.application.ports.out;
 
 import com.qrest.categories.domain.model.Category;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -9,13 +10,15 @@ import java.util.Optional;
  * @author QRest Team
  * @version 1.0
  */
-public interface CategoryRepository {
+public interface CategoryRepositoryPort {
 
-    Category save(Category category);
+        Category save(Category category);
 
         Optional<Category> findById(Long id);
 
         boolean existsByName(String name);
 
         Optional<Category> findByName(String name);
+
+        List<Category> findAll();
 }

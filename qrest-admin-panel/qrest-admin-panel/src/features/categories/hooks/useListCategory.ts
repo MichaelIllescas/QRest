@@ -16,8 +16,14 @@ export const useListCategory = () => {
       setLoading(true);
       const data = await categoryService.getCategories();
       setCategories(data);
-    } catch (error) {
-      setError(error as Error);
+    } catch (err: any) {
+      const backendMessage =
+        err?.response?.data?.message ||
+        err?.response?.data?.error ||
+        err?.message ||
+        "Error desconocido al cargar las categorías";
+      
+      setError(new Error(backendMessage));
     } finally {
       setLoading(false);
     }   

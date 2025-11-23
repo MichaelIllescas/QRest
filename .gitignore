@@ -32,3 +32,5 @@ TestResults.xml
 .env
 
 coverage/
+
+node_modules/
