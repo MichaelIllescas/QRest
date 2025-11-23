@@ -11,4 +11,5 @@ import com.qrest.categories.domain.model.Category;
 public interface CreateCategoryUseCase {
 
     Category createCategory(String name);
+    
 }
