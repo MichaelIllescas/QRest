@@ -81,7 +81,7 @@ const Products: React.FC = () => {
                 )}
               ></Table>
             ))}
-          {formRegisterOpen && <RegisterProductForm onSuccess={fetchProducts} />}
+          {formRegisterOpen && <RegisterProductForm  />}
         </div>
       </div>
     </Container>

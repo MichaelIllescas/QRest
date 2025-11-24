@@ -1,10 +1,9 @@
-
 // Table.tsx
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import styles from "./Table.module.css";
 import type { TableProps } from "./table.types";
 
-export function Table<T extends Record<string, any>>({
+const Table: React.FC<TableProps> = ({
   data = [],
   columns = [],
   actions,
@@ -15,22 +14,24 @@ export function Table<T extends Record<string, any>>({
   sortable = true,
   variant = "default",
   mode = "full",
-}: TableProps<T>) {
-
+}) => {
   const enableSearch = mode === "full" ? searchable : mode !== "simple";
   const enableSort = mode === "full" ? sortable : mode !== "simple";
 
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [sortConfig, setSortConfig] = useState<{ key: keyof T | null; direction: "asc"|"desc" }>({
+  const [sortConfig, setSortConfig] = useState<{
+    key: keyof T | null;
+    direction: "asc" | "desc";
+  }>({
     key: null,
-    direction: "asc"
+    direction: "asc",
   });
 
   const filtered = useMemo(() => {
     if (!enableSearch || !search) return data;
-    return data.filter(row =>
-      columns.some(col => {
+    return data.filter((row) =>
+      columns.some((col) => {
         const val = row[col.key];
         return val?.toString().toLowerCase().includes(search.toLowerCase());
       })
@@ -39,7 +40,7 @@ export function Table<T extends Record<string, any>>({
 
   const sorted = useMemo(() => {
     if (!enableSort || !sortConfig.key) return filtered;
-    return [...filtered].sort((a,b) => {
+    return [...filtered].sort((a, b) => {
       const va = a[sortConfig.key!];
       const vb = b[sortConfig.key!];
       if (va == null) return 1;
@@ -50,8 +51,12 @@ export function Table<T extends Record<string, any>>({
           : vb.localeCompare(va);
       }
       return sortConfig.direction === "asc"
-        ? (va > vb ? 1 : -1)
-        : (va < vb ? 1 : -1);
+        ? va > vb
+          ? 1
+          : -1
+        : va < vb
+        ? 1
+        : -1;
     });
   }, [filtered, enableSort, sortConfig]);
 
@@ -63,9 +68,10 @@ export function Table<T extends Record<string, any>>({
 
   const changeSort = (key: keyof T) => {
     if (!enableSort) return;
-    setSortConfig(prev => ({
+    setSortConfig((prev) => ({
       key,
-      direction: prev.key === key && prev.direction === "asc" ? "desc" : "asc"
+      direction:
+        prev.key === key && prev.direction === "asc" ? "desc" : "asc",
     }));
   };
 
@@ -73,18 +79,26 @@ export function Table<T extends Record<string, any>>({
     const pages: (number | "...")[] = [];
     const max = totalPages;
     if (max <= 5) {
-      for (let i=1;i<=max;i++) pages.push(i);
+      for (let i = 1; i <= max; i++) pages.push(i);
     } else {
       if (currentPage <= 3) {
-        pages.push(1,2,3,4,"...",max);
-      } else if (currentPage >= max-2) {
-        pages.push(1,"...",max-3,max-2,max-1,max);
+        pages.push(1, 2, 3, 4, "...", max);
+      } else if (currentPage >= max - 2) {
+        pages.push(1, "...", max - 3, max - 2, max - 1, max);
       } else {
-        pages.push(1,"...",currentPage-1,currentPage,currentPage+1,"...",max);
+        pages.push(1, "...", currentPage - 1, currentPage, currentPage + 1, "...", max);
       }
     }
     return pages;
   };
+
+  // normalizar data para evitar map() sobre algo que no es array
+  const rows = Array.isArray(data) ? data : [];
+  if (!Array.isArray(data)) {
+    // ayuda a depurar en entornos donde la respuesta cambia
+    // (puedes eliminar el console.warn en producción)
+    console.warn("Table: expected array but received:", data);
+  }
 
   return (
     <div className={`${styles.tableContainer} ${styles[variant]}`}>
@@ -101,7 +115,10 @@ export function Table<T extends Record<string, any>>({
             className={styles.searchInput}
             placeholder="Buscar..."
             value={search}
-            onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setCurrentPage(1);
+            }}
           />
         </div>
       )}
@@ -110,7 +127,7 @@ export function Table<T extends Record<string, any>>({
         <table className={styles.table}>
           <thead>
             <tr>
-              {columns.map(col => (
+              {columns.map((col) => (
                 <th
                   key={String(col.key)}
                   className={enableSort ? styles.sortable : ""}
@@ -130,20 +147,27 @@ export function Table<T extends Record<string, any>>({
             </tr>
           </thead>
           <tbody>
-            {paginated.length > 0 ? paginated.map((row,i) => (
-              <tr key={i}>
-                {columns.map(col => (
-                  <td key={String(col.key)}>
-                    {col.render ? col.render(row[col.key], row) : row[col.key]}
-                  </td>
-                ))}
-                {actions && (
-                  <td className={styles.actionCol}>{actions(row)}</td>
-                )}
-              </tr>
-            )) : (
+            {paginated.length > 0 ? (
+              paginated.map((row, i) => (
+                <tr key={i}>
+                  {columns.map((col) => (
+                    <td key={String(col.key)}>
+                      {col.render
+                        ? col.render(row[col.key], row)
+                        : row[col.key]}
+                    </td>
+                  ))}
+                  {actions && (
+                    <td className={styles.actionCol}>{actions(row)}</td>
+                  )}
+                </tr>
+              ))
+            ) : (
               <tr>
-                <td colSpan={columns.length + (actions?1:0)} className={styles.noData}>
+                <td
+                  colSpan={columns.length + (actions ? 1 : 0)}
+                  className={styles.noData}
+                >
                   No se encontraron resultados
                 </td>
               </tr>
@@ -155,13 +179,17 @@ export function Table<T extends Record<string, any>>({
       {totalPages > 1 && (
         <div className={styles.pagination}>
           <button
-            onClick={() => setCurrentPage(c => Math.max(1, c-1))}
+            onClick={() => setCurrentPage((c) => Math.max(1, c - 1))}
             disabled={currentPage === 1}
-          >Anterior</button>
+          >
+            Anterior
+          </button>
 
-          {getPages().map((p,idx) =>
+          {getPages().map((p, idx) =>
             p === "..." ? (
-              <span key={idx} className={styles.ellipsis}>…</span>
+              <span key={idx} className={styles.ellipsis}>
+                …
+              </span>
             ) : (
               <button
                 key={p}
@@ -174,11 +202,15 @@ export function Table<T extends Record<string, any>>({
           )}
 
           <button
-            onClick={() => setCurrentPage(c => Math.min(totalPages, c+1))}
+            onClick={() => setCurrentPage((c) => Math.min(totalPages, c + 1))}
             disabled={currentPage === totalPages}
-          >Siguiente</button>
+          >
+            Siguiente
+          </button>
         </div>
       )}
     </div>
   );
-}
+};
+
+export { Table };
