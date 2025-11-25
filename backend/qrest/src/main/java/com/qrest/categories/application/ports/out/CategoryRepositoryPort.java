@@ -22,4 +22,6 @@ public interface CategoryRepositoryPort {
 
         List<Category> findAll();
         boolean hasProducts(Long categoryId);
+
+        void delete(Long id);
 }

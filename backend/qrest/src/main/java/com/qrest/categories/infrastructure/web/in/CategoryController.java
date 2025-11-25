@@ -60,7 +60,7 @@ public class CategoryController {
     ) {
         this.createCategoryUseCase = createCategoryUseCase;
         this.getAllCategoriesUseCase = getAllCategoriesUseCase;
-        this.updateCategoryUseCase=  updateCategoryUseCase;
+        this.updateCategoryUseCase = updateCategoryUseCase;
 
         this.deleteCategoryUseCase = deleteCategoryUseCase;
     }
@@ -108,35 +108,34 @@ public class CategoryController {
                 .collect(toList());
         return categoriesRespose;
     }
-  
-  
+
+
     @PutMapping("/{id}")
     public ResponseEntity<CategoryResponseDTO> updateCategory(
             @PathVariable Long id,
             @Valid @RequestBody CategoryUpdateDTO request
-            ) {
+    ) {
         Category category = updateCategoryUseCase.updateCategory(id, request.getName());
         CategoryResponseDTO response = new CategoryResponseDTO(category.getId(), category.getName(), category.isActive());
         return ResponseEntity.ok(response);
     }
 
-     @DeleteMapping("/delete/{id}")
-     @ResponseStatus(HttpStatus.NO_CONTENT)
-     @Operation(summary = "Eliminar categoría", description = "Desactiva una categoría existente (soft delete).")
-     @ApiResponses(value = {
-             @ApiResponse(responseCode = "204", description = "Categoría eliminada correctamente"),
 
-             @ApiResponse(responseCode = "404", description = "Categoría no encontrada",
-                     content = @Content(mediaType = "application/json",
-                             schema = @Schema(implementation = ApiError.class))),
+    @DeleteMapping("/delete/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Eliminar categoría", description = "Desactiva una categoría existente (soft delete).")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Categoría eliminada correctamente"),
 
-             @ApiResponse(responseCode = "500", description = "Error interno del servidor",
-                     content = @Content(mediaType = "application/json",
-                             schema = @Schema(implementation = ApiError.class)))
-     })
+            @ApiResponse(responseCode = "404", description = "Categoría no encontrada",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiError.class))),
 
-    public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiError.class)))
+    })
+    public void deleteCategory(@PathVariable Long id) {
         deleteCategoryUseCase.deleteCategory(id);
-        return ResponseEntity.noContent().build();
-     }
+    }
 }

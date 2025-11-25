@@ -25,8 +25,6 @@ public class CategoryRepositoryAdapter implements CategoryRepositoryPort {
 
     private final ProductRepositoryJPA productRepositoryJPA;
 
-    @PersistenceContext
-    private EntityManager entityManager;
 
     public CategoryRepositoryAdapter(CategoryJpaRepository jpaRepository, ProductRepositoryJPA productRepositoryJPA) {
         this.jpaRepository = jpaRepository;
@@ -65,5 +63,9 @@ public class CategoryRepositoryAdapter implements CategoryRepositoryPort {
     public boolean hasProducts(Long categoryId) {
         return productRepositoryJPA.findAll().stream()
                 .anyMatch(product -> product.getCategoryId().equals(categoryId));
+    }
+    @Override
+    public void delete(Long id) {
+        jpaRepository.deleteById(id);
     }
 }
