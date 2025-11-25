@@ -1,4 +1,5 @@
 /**
+import { name } from './../../../../node_modules/ci-info/index.d';
  * Representa una categoría visible en la carta.
  * Coincide con el CategoryDTO del backend.
  */
@@ -10,4 +11,9 @@ export interface Category {
   name: string;
   /** Indica si la categoría está activa (obligatorio) */
   active?: boolean;
+}
+
+export interface CategoryUpdateDTO {
+  name  : string; 
+  active: boolean;
 }
