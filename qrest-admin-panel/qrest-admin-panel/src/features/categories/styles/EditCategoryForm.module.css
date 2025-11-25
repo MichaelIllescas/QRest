@@ -1,0 +1,161 @@
+/* ============================================
+   CONTENEDOR PRINCIPAL DEL FORMULARIO
+   ============================================ */
+.formContainer {
+  background-color: var(--color-background-secondary, #ffffff);
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.formContainer h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-text-primary, #1f2937);
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid var(--color-primary, #3b82f6);
+  padding-bottom: 0.5rem;
+}
+
+/* ============================================
+   GRUPOS DE FORMULARIO
+   ============================================ */
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.formGroup label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-secondary, #4b5563);
+  margin-bottom: 0.5rem;
+}
+
+.formGroup input[type="text"],
+.formGroup .formControl {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid var(--color-border, #d1d5db);
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.formGroup input[type="text"]:focus,
+.formGroup .formControl:focus {
+  outline: none;
+  border-color: var(--color-primary, #3b82f6);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.formGroup input[type="text"]:disabled,
+.formGroup .formControl:disabled {
+  background-color: var(--color-background-disabled, #f3f4f6);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* ============================================
+   CHECKBOX (CATEGORÍA ACTIVA)
+   ============================================ */
+.formGroup label input[type="checkbox"] {
+  width: auto;
+  margin-right: 0.5rem;
+  cursor: pointer;
+  accent-color: var(--color-primary, #3b82f6);
+  transform: scale(1.1);
+}
+
+.formGroup label input[type="checkbox"]:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* ============================================
+   BOTONES DE ACCIÓN
+   ============================================ */
+.formActions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border, #e5e7eb);
+}
+
+.formActions button {
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+/* Botón Primario */
+.formActions .btnPrimary {
+  background-color: var(--color-primary, #3b82f6);
+  color: white;
+}
+
+.formActions .btnPrimary:hover:not(:disabled) {
+  background-color: var(--color-primary-dark, #2563eb);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2);
+}
+
+.formActions .btnPrimary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.formActions .btnPrimary:disabled {
+  background-color: var(--color-background-disabled, #d1d5db);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Botón Cancelar */
+.formActions .btnSecondary {
+  background-color: var(--color-background-secondary, #f3f4f6);
+  color: var(--color-text-primary, #1f2937);
+  border: 1px solid var(--color-border, #d1d5db);
+}
+
+.formActions .btnSecondary:hover:not(:disabled) {
+  background-color: var(--color-background-hover, #e5e7eb);
+  transform: translateY(-1px);
+}
+
+.formActions .btnSecondary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.formActions .btnSecondary:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 640px) {
+  .formContainer {
+    padding: 1.5rem;
+  }
+
+  .formContainer h2 {
+    font-size: 1.25rem;
+  }
+
+  .formActions {
+    flex-direction: column-reverse;
+  }
+
+  .formActions button {
+    width: 100%;
+  }
+}
