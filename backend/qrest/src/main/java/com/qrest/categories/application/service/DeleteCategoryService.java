@@ -35,9 +35,7 @@ public class DeleteCategoryService implements DeleteCategoryUseCase {
             throw new CategoryHasProductException(id);
         }
 
-        category.deactivate();
-
-        categoryRepositoryPort.save(category);
+          categoryRepositoryPort.delete(id);
 
     }
 }
