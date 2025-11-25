@@ -9,10 +9,13 @@ import { useListCategory } from "../features/categories/hooks/useListCategory";
 import { AlertModal } from "../shared/components/Alert/AlertModal";
 import { useDeleteCategory } from "../features/categories/hooks/useDeleteCategory";
 import { Alert } from "../shared/components/Alert/Alert";
-
+import EditCategoryForm from "../features/categories/components/EditCategoryForm";
 const Categories: React.FC = () => {
   const [formRegisterOpen, setFormRegisterOpen] = useState(false);
+  const [categoryToEdit, setCategoryToEdit] = useState<Category | null>(null);
   const [categoryToDelete, setCategoryToDelete] = useState<number | null>(null);
+
+  const [updateSuccessMessage, setUpdateSuccessMessage] = useState<string | null>(null);
   
   const { categories, loading, error, setError, listCategory } = useListCategory();
   const { 
@@ -42,6 +45,12 @@ const Categories: React.FC = () => {
     listCategory();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleCloseAllForms = () => {
+    setFormRegisterOpen(false);
+    setCategoryToEdit(null);
+    setError(null);
+  };
 
   return (
     <Container size="xl" className="py-6">
@@ -102,6 +111,18 @@ const Categories: React.FC = () => {
             </Alert>
           )}
 
+           {/* 👇 NUEVO: Mostrar éxito de actualización */}
+           {updateSuccessMessage && (
+            <Alert
+              variant="success" 
+              title="Categoría Actualizada"
+              closable
+              onClose={() => setUpdateSuccessMessage(null)}
+            >
+              {updateSuccessMessage}
+            </Alert>
+          )}
+
           {/* Mostrar loading */}
           {loading && (
             <div className="loading-message">
@@ -120,7 +141,15 @@ const Categories: React.FC = () => {
               title="Listado de Categorías"
               actions={(row: Category) => (
                 <>
-                  <button className="btn btn-secondary">📝</button>
+                {/* 👇 BOTÓN DE EDITAR FUNCIONAL */}
+                  <button className="btn btn-secondary"
+                  onClick={() => {
+                    setCategoryToEdit(row);
+                    setFormRegisterOpen(false);
+                  }}
+                  >
+                    📝
+                    </button>
                   <button
                     className="btn btn-danger"
                     onClick={() => setCategoryToDelete(row.id!)}
@@ -133,6 +162,20 @@ const Categories: React.FC = () => {
             ></Table>
           )}
           {formRegisterOpen && <RegisterCategoryForm />}
+
+          {/* 👇 Mostrar formulario de edición */}
+          {categoryToEdit !== null && (
+            <EditCategoryForm
+              category={categoryToEdit}
+              onSuccess={() => {
+                handleCloseAllForms();
+                listCategory();
+                setUpdateSuccessMessage("La categoría ha sido actualizada correctamente.");
+              }}
+              onCancel={handleCloseAllForms}
+            />
+          )}
+
         </div>
       </div>
 
