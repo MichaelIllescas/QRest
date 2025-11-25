@@ -1,6 +1,7 @@
 package com.qrest.categories.infrastructure.web.in;
 
 import com.qrest.categories.application.ports.in.CreateCategoryUseCase;
+import com.qrest.categories.application.ports.in.DeleteCategoryUseCase;
 import com.qrest.categories.application.ports.in.UpdateCategoryUseCase;
 import com.qrest.categories.application.ports.in.GetAllCategoriesUseCase;
 import com.qrest.categories.domain.model.Category;
@@ -52,14 +53,16 @@ public class CategoryController {
     private final GetAllCategoriesUseCase getAllCategoriesUseCase;
     private CategoryMapper categoryMapper;
     private final UpdateCategoryUseCase updateCategoryUseCase;
+    private final DeleteCategoryUseCase deleteCategoryUseCase;
 
 
-    public CategoryController(CreateCategoryUseCase createCategoryUseCase, GetAllCategoriesUseCase getAllCategoriesUseCase,  UpdateCategoryUseCase updateCategoryUseCase
-) {
+    public CategoryController(CreateCategoryUseCase createCategoryUseCase, GetAllCategoriesUseCase getAllCategoriesUseCase, UpdateCategoryUseCase updateCategoryUseCase, DeleteCategoryUseCase deleteCategoryUseCase
+    ) {
         this.createCategoryUseCase = createCategoryUseCase;
         this.getAllCategoriesUseCase = getAllCategoriesUseCase;
         this.updateCategoryUseCase=  updateCategoryUseCase;
 
+        this.deleteCategoryUseCase = deleteCategoryUseCase;
     }
 
     @PostMapping("/create")
@@ -117,5 +120,23 @@ public class CategoryController {
         return ResponseEntity.ok(response);
     }
 
+     @DeleteMapping("/delete/{id}")
+     @ResponseStatus(HttpStatus.NO_CONTENT)
+     @Operation(summary = "Eliminar categoría", description = "Desactiva una categoría existente (soft delete).")
+     @ApiResponses(value = {
+             @ApiResponse(responseCode = "204", description = "Categoría eliminada correctamente"),
 
+             @ApiResponse(responseCode = "404", description = "Categoría no encontrada",
+                     content = @Content(mediaType = "application/json",
+                             schema = @Schema(implementation = ApiError.class))),
+
+             @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                     content = @Content(mediaType = "application/json",
+                             schema = @Schema(implementation = ApiError.class)))
+     })
+
+    public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
+        deleteCategoryUseCase.deleteCategory(id);
+        return ResponseEntity.noContent().build();
+     }
 }

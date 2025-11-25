@@ -21,4 +21,5 @@ public interface CategoryRepositoryPort {
         Optional<Category> findByName(String name);
 
         List<Category> findAll();
+        boolean hasProducts(Long categoryId);
 }

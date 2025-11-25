@@ -2,10 +2,15 @@ package com.qrest.categories.infrastructure.web.in;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qrest.categories.application.ports.in.CreateCategoryUseCase;
+import com.qrest.categories.application.ports.in.DeleteCategoryUseCase;
+import com.qrest.categories.application.ports.in.UpdateCategoryUseCase;
+import com.qrest.categories.domain.exception.CategoryHasProductException;
+import com.qrest.categories.domain.exception.CategoryNotFoundException;
 import com.qrest.categories.domain.exception.DuplicateCategoryNameException;
 import com.qrest.categories.domain.model.Category;
 import com.qrest.categories.infrastructure.web.CategoryExceptionHandler;
 import com.qrest.categories.infrastructure.web.dto.CategoryCreateDTO;
+import com.qrest.categories.infrastructure.web.dto.CategoryUpdateDTO;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +21,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -38,6 +45,12 @@ class CategoryControllerTest {
 
     @MockBean
     private CreateCategoryUseCase createCategoryUseCase;
+    @MockBean
+    private UpdateCategoryUseCase updateCategoryUseCase;
+
+    @MockBean
+    private DeleteCategoryUseCase deleteCategoryUseCase;
+
 
     @MockBean
     private com.qrest.categories.application.ports.in.GetAllCategoriesUseCase getAllCategoriesUseCase;
@@ -71,4 +84,51 @@ class CategoryControllerTest {
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isConflict());
     }
+    @Test
+    void updateCategory_WhenValidRequest_ShouldReturn200() throws Exception {
+        Long categoryId = 1L;
+        CategoryUpdateDTO request = new CategoryUpdateDTO("Tragos");
+        Category updatedCategory = Category.reconstitute(categoryId, "Tragos", true);
+
+        when(updateCategoryUseCase.updateCategory(categoryId, "Tragos"))
+                .thenReturn(updatedCategory);
+
+        mockMvc.perform(put("/api/admin/categories/{id}", categoryId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void deleteCategory_WhenCategoryExists_ShouldReturn204() throws Exception {
+        Long categoryId = 1L;
+        doNothing().when(deleteCategoryUseCase).deleteCategory(categoryId);
+
+        mockMvc.perform(delete("/api/admin/categories/delete/{id}", categoryId))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void deleteCategory_WhenCategoryNotFound_ShouldReturn404() throws Exception {
+        Long categoryId = 999L;
+        doThrow(new CategoryNotFoundException(categoryId))
+                .when(deleteCategoryUseCase).deleteCategory(categoryId);
+
+        mockMvc.perform(delete("/api/admin/categories/delete/{id}", categoryId))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void deleteCategory_WhenHasProducts_ShouldReturn409() throws Exception {
+        Long categoryId = 1L;
+        doThrow(new CategoryHasProductException(categoryId))
+                .when(deleteCategoryUseCase).deleteCategory(categoryId);
+
+        mockMvc.perform(delete("/api/admin/categories/delete/{id}", categoryId))
+                .andExpect(status().isConflict());
+    }
+
+
 }
+
+
