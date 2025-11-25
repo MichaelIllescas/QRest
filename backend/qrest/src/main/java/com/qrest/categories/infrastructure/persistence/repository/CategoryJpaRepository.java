@@ -16,4 +16,5 @@ public interface CategoryJpaRepository extends JpaRepository<CategoryJpaEntity, 
 
     boolean existsByName(String name);
     Optional<CategoryJpaEntity> findByName(String name);
+
 }

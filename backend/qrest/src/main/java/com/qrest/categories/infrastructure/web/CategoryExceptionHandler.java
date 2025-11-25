@@ -1,5 +1,6 @@
 package com.qrest.categories.infrastructure.web;
 
+import com.qrest.categories.domain.exception.CategoryHasProductException;
 import com.qrest.categories.domain.exception.CategoryNotFoundException;
 import com.qrest.categories.domain.exception.DuplicateCategoryNameException;
 import com.qrest.shared.exception.ApiError;
@@ -46,6 +47,20 @@ public class CategoryExceptionHandler {
         );
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
+    @ExceptionHandler(CategoryHasProductException.class)
+    public ResponseEntity<ApiError> handlerCategoryHasProduct(
+            CategoryHasProductException ex,
+            WebRequest request
+    ) {
+        ApiError error = new ApiError(
+                HttpStatus.CONFLICT.value(),
+                "Conflict",
+                ex.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiError> handlerValidationErrors(
             MethodArgumentNotValidException ex,

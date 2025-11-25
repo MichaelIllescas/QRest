@@ -18,8 +18,8 @@ export const useDeleteCategory = () => {
       await categoryService.deleteCategory(id);
       
       setDeleted(true);
-    } catch (error) {
-      setError(error as Error);
+    } catch (err: any) {
+      setError({ message: err.response?.data?.message || "Error desconocido" } as Error);
       setDeleted(false);
     } finally {
       setLoading(false);

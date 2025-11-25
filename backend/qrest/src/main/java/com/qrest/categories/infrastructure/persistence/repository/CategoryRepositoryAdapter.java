@@ -4,6 +4,9 @@ import com.qrest.categories.application.ports.out.CategoryRepositoryPort;
 import com.qrest.categories.domain.model.Category;
 import com.qrest.categories.infrastructure.mapper.CategoryMapper;
 import com.qrest.categories.infrastructure.persistence.entity.CategoryJpaEntity;
+import com.qrest.products.infrastructure.persistence.repository.ProductRepositoryJPA;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -20,9 +23,14 @@ public class CategoryRepositoryAdapter implements CategoryRepositoryPort {
 
     private final CategoryJpaRepository jpaRepository;
 
+    private final ProductRepositoryJPA productRepositoryJPA;
 
-    public CategoryRepositoryAdapter(CategoryJpaRepository jpaRepository) {
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public CategoryRepositoryAdapter(CategoryJpaRepository jpaRepository, ProductRepositoryJPA productRepositoryJPA) {
         this.jpaRepository = jpaRepository;
+        this.productRepositoryJPA = productRepositoryJPA;
     }
 
     @Override
@@ -52,5 +60,10 @@ public class CategoryRepositoryAdapter implements CategoryRepositoryPort {
         return jpaRepository.findAll().stream()
                 .map(CategoryMapper::toDomain)
                 .toList();
+    }
+    @Override
+    public boolean hasProducts(Long categoryId) {
+        return productRepositoryJPA.findAll().stream()
+                .anyMatch(product -> product.getCategoryId().equals(categoryId));
     }
 }

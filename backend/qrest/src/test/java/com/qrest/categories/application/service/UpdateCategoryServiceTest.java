@@ -1,6 +1,6 @@
 package com.qrest.categories.application.service;
 
-import com.qrest.categories.application.ports.out.CategoryRepository;
+import com.qrest.categories.application.ports.out.CategoryRepositoryPort;
 import com.qrest.categories.domain.exception.CategoryNotFoundException;
 import com.qrest.categories.domain.exception.DuplicateCategoryNameException;
 import com.qrest.categories.domain.model.Category;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 public class UpdateCategoryServiceTest {
 
     @Mock
-    private CategoryRepository categoryRepository;
+    private CategoryRepositoryPort categoryRepository;
 
     @InjectMocks
     private UpdateCategoryService updateCategoryService;
