@@ -16,7 +16,7 @@ const EditCategoryForm: React.FC<EditCategoryFormProps> = ({
   onCancel,
 }) => {
   const [name, setName] = useState(category.name);
-  const [active, setActive] = useState(category.active);
+  const [active, setActive] = useState(category.active || true);
 
   const { updateCategory, loading, error, updated, setError } = useUpdateCategory();
 

@@ -25,7 +25,7 @@ export const categoryService = {
     const url = DELETE_CATEGORY_URL.replace('{id}', id.toString());
     await apiClient.delete(url);
   }, 
-  Updatecategory: async (id: number, data: CategoryUpdateDTO): Promise<void> => {
+  updateCategory: async (id: number, data: CategoryUpdateDTO): Promise<void> => {
    const response = await apiClient.put(`/api/admin/categories/${id}`, data);
     return response.data;
   }  

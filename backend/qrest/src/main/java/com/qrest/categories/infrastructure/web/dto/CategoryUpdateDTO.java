@@ -21,4 +21,6 @@ public class CategoryUpdateDTO {
     @NotBlank(message = "El nombre no puede estar vacio")
     @Size(max = 100, message = "El nombre no puede excer los 100 caracteres")
     private String name;
+
+    private Boolean active;
 }

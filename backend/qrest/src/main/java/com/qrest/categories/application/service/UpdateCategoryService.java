@@ -2,7 +2,6 @@ package com.qrest.categories.application.service;
 
 import com.qrest.categories.application.ports.in.UpdateCategoryUseCase;
 import com.qrest.categories.application.ports.out.CategoryRepositoryPort;
-import com.qrest.categories.application.ports.out.CategoryRepositoryPort;
 import com.qrest.categories.domain.exception.CategoryNotFoundException;
 import com.qrest.categories.domain.exception.DuplicateCategoryNameException;
 import com.qrest.categories.domain.model.Category;
@@ -26,7 +25,7 @@ public class UpdateCategoryService implements UpdateCategoryUseCase {
     }
 
     @Override
-    public Category updateCategory(Long id, String newName) {
+    public Category updateCategory(Long id, String newName, Boolean active) {
 
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new CategoryNotFoundException(id));
@@ -37,6 +36,14 @@ public class UpdateCategoryService implements UpdateCategoryUseCase {
             }
         }
         category.changeName(newName);
+
+        if(active !=null) {
+           if (active) {
+               category.activate();
+           } else {
+               category.deactivate();
+           }
+        }
 
         return categoryRepository.save(category);
     }

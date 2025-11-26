@@ -115,8 +115,15 @@ public class CategoryController {
             @PathVariable Long id,
             @Valid @RequestBody CategoryUpdateDTO request
     ) {
-        Category category = updateCategoryUseCase.updateCategory(id, request.getName());
-        CategoryResponseDTO response = new CategoryResponseDTO(category.getId(), category.getName(), category.isActive());
+        Category category = updateCategoryUseCase.updateCategory(
+                id,
+                request.getName(),
+                request.getActive()
+        );
+        CategoryResponseDTO response = new CategoryResponseDTO(category.getId(),
+                category.getName(),
+                category.isActive()
+        );
         return ResponseEntity.ok(response);
     }
 
