@@ -2,6 +2,13 @@ import { renderHook, act } from '@testing-library/react';
 import { useFileUpload } from './useFileUpload';
 import type { UseFileUploadOptions } from './types';
 
+// Mock de URL.createObjectURL y URL.revokeObjectURL
+global.URL.createObjectURL = jest.fn(() => 'mock-url');
+global.URL.revokeObjectURL = jest.fn();
+
+// Mock de crypto.randomUUID
+global.crypto.randomUUID = jest.fn(() => 'mock-uuid-' + Math.random());
+
 // Helper para crear archivos mock
 const createMockFile = (
   name: string,
@@ -19,6 +26,11 @@ const createMockFileList = (files: File[]): FileList => {
   return fileList as FileList;
 };
 
+// Limpiar mocks antes de cada test
+beforeEach(() => {
+  jest.clearAllMocks();
+});
+
 describe('useFileUpload', () => {
   
   // ========================================
@@ -30,11 +42,102 @@ describe('useFileUpload', () => {
 
       expect(result.current.files).toEqual([]);
       expect(result.current.errorMessage).toBe('');
+      expect(typeof result.current.processFiles).toBe('function');
+      expect(typeof result.current.removeFile).toBe('function');
+      expect(typeof result.current.setErrorMessage).toBe('function');
+    });
+
+    it('debe inicializar con externalFiles vacío', () => {
+      const { result } = renderHook(() => 
+        useFileUpload({ externalFiles: [] })
+      );
+
+      expect(result.current.files).toEqual([]);
+      expect(result.current.errorMessage).toBe('');
     });
   });
 
   // ========================================
-  // TEST 2: Validación de tamaño de archivo
+  // TEST 2: Sincronización con externalFiles
+  // ========================================
+  describe('Sincronización con externalFiles', () => {
+    it('debe limpiar archivos cuando externalFiles se resetea a vacío', () => {
+      const { result, rerender } = renderHook(
+        ({ externalFiles }: UseFileUploadOptions) => 
+          useFileUpload({ externalFiles }),
+        { initialProps: { externalFiles: [createMockFile('file.jpg', 1024, 'image/jpeg')] } }
+      );
+
+      // Agregar archivos
+      const file = createMockFile('test.jpg', 1024, 'image/jpeg');
+      const fileList = createMockFileList([file]);
+
+      act(() => {
+        result.current.processFiles(fileList);
+      });
+
+      expect(result.current.files).toHaveLength(1);
+
+      // Resetear externalFiles a vacío
+      rerender({ externalFiles: [] });
+
+      expect(result.current.files).toEqual([]);
+      expect(result.current.errorMessage).toBe('');
+    });
+
+    it('debe revocar URLs de preview al limpiar archivos', () => {
+      const { result, rerender } = renderHook(
+        ({ externalFiles }: UseFileUploadOptions) => 
+          useFileUpload({ externalFiles, showPreview: true }),
+        { initialProps: { externalFiles: [createMockFile('file.jpg', 1024, 'image/jpeg')] } }
+      );
+
+      // Agregar archivo con preview
+      const imageFile = createMockFile('image.jpg', 1024, 'image/jpeg');
+      const fileList = createMockFileList([imageFile]);
+
+      act(() => {
+        result.current.processFiles(fileList);
+      });
+
+      expect(result.current.files[0].preview).toBe('mock-url');
+
+      // Resetear externalFiles
+      rerender({ externalFiles: [] });
+
+      expect(global.URL.revokeObjectURL).toHaveBeenCalledWith('mock-url');
+      expect(result.current.files).toEqual([]);
+    });
+
+    it('NO debe limpiar archivos si externalFiles no está vacío', () => {
+      const mockFile = createMockFile('external.jpg', 1024, 'image/jpeg');
+      
+      const { result, rerender } = renderHook(
+        ({ externalFiles }: UseFileUploadOptions) => 
+          useFileUpload({ externalFiles }),
+        { initialProps: { externalFiles: [mockFile] } }
+      );
+
+      // Agregar archivos
+      const file = createMockFile('test.jpg', 1024, 'image/jpeg');
+      const fileList = createMockFileList([file]);
+
+      act(() => {
+        result.current.processFiles(fileList);
+      });
+
+      expect(result.current.files).toHaveLength(1);
+
+      // Cambiar externalFiles pero mantenerlo no vacío
+      const anotherMockFile = createMockFile('another.jpg', 1024, 'image/jpeg');
+      rerender({ externalFiles: [anotherMockFile] });
+
+      expect(result.current.files).toHaveLength(1); // No debe limpiar
+    });
+  });
+
+  // ========================================
+  // TEST 3: Validación de tamaño de archivo
   // ========================================
   describe('Validación de tamaño', () => {
     it('debe rechazar archivos que excedan el tamaño máximo', () => {
@@ -77,10 +180,28 @@ describe('useFileUpload', () => {
       expect(result.current.errorMessage).toBe('');
       expect(onChange).toHaveBeenCalledWith([smallFile]);
     });
+
+    it('debe calcular correctamente el tamaño máximo en MB', () => {
+      const onError = jest.fn();
+      const maxSize = 2.5 * 1024 * 1024; // 2.5MB
+      
+      const { result } = renderHook(() =>
+        useFileUpload({ maxSize, onError })
+      );
+
+      const bigFile = createMockFile('big.jpg', 3 * 1024 * 1024, 'image/jpeg');
+      const fileList = createMockFileList([bigFile]);
+
+      act(() => {
+        result.current.processFiles(fileList);
+      });
+
+      expect(result.current.errorMessage).toContain('excede el máximo de 2.50MB');
+    });
   });
 
   // ========================================
-  // TEST 3: Validación de tipo de archivo
+  // TEST 4: Validación de tipo de archivo
   // ========================================
   describe('Validación de tipo', () => {
     it('debe rechazar archivos que no coincidan con accept', () => {
@@ -148,10 +269,43 @@ describe('useFileUpload', () => {
 
       expect(result.current.files).toHaveLength(2);
     });
+
+    it('debe aceptar cualquier tipo cuando accept="*/*"', () => {
+      const { result } = renderHook(() =>
+        useFileUpload({ accept: '*/*', multiple: true })
+      );
+
+      const jpgFile = createMockFile('photo.jpg', 1024, 'image/jpeg');
+      const pdfFile = createMockFile('doc.pdf', 1024, 'application/pdf');
+      const txtFile = createMockFile('file.txt', 1024, 'text/plain');
+      const fileList = createMockFileList([jpgFile, pdfFile, txtFile]);
+
+      act(() => {
+        result.current.processFiles(fileList);
+      });
+
+      expect(result.current.files).toHaveLength(3);
+      expect(result.current.errorMessage).toBe('');
+    });
+
+    it('debe manejar extensiones en mayúsculas/minúsculas', () => {
+      const { result } = renderHook(() =>
+        useFileUpload({ accept: '.jpg' })
+      );
+
+      const jpgFile = createMockFile('photo.JPG', 1024, 'image/jpeg');
+      const fileList = createMockFileList([jpgFile]);
+
+      act(() => {
+        result.current.processFiles(fileList);
+      });
+
+      expect(result.current.files).toHaveLength(1);
+    });
   });
 
   // ========================================
-  // TEST 4: Modo múltiple vs simple
+  // TEST 5: Modo múltiple vs simple
   // ========================================
   describe('Modo multiple', () => {
     it('debe rechazar múltiples archivos cuando multiple=false', () => {
@@ -212,6 +366,97 @@ describe('useFileUpload', () => {
       expect(result.current.files).toHaveLength(0);
       expect(result.current.errorMessage).toContain('Máximo 2 archivos permitidos');
       expect(onError).toHaveBeenCalled();
+    });
+
+    it('debe permitir agregar archivos hasta maxFiles en múltiples operaciones', () => {
+      const { result } = renderHook(() =>
+        useFileUpload({ multiple: true, maxFiles: 3 })
+      );
+
+      // Primera carga: 2 archivos
+      const firstBatch = [
+        createMockFile('file1.jpg', 1024, 'image/jpeg'),
+        createMockFile('file2.jpg', 1024, 'image/jpeg'),
+      ];
+      const fileList1 = createMockFileList(firstBatch);
+
+      act(() => {
+        result.current.processFiles(fileList1);
+      });
+
+      expect(result.current.files).toHaveLength(2);
+
+      // Segunda carga: 1 archivo más
+      const secondBatch = [createMockFile('file3.jpg', 1024, 'image/jpeg')];
+      const fileList2 = createMockFileList(secondBatch);
+
+      act(() => {
+        result.current.processFiles(fileList2);
+      });
+
+      expect(result.current.files).toHaveLength(3);
+      expect(result.current.errorMessage).toBe('');
+    });
+
+    it('debe rechazar agregar más archivos si se excede maxFiles', () => {
+      const onError = jest.fn();
+      
+      const { result } = renderHook(() =>
+        useFileUpload({ multiple: true, maxFiles: 2, onError })
+      );
+
+      // Primera carga: 2 archivos
+      const firstBatch = [
+        createMockFile('file1.jpg', 1024, 'image/jpeg'),
+        createMockFile('file2.jpg', 1024, 'image/jpeg'),
+      ];
+      const fileList1 = createMockFileList(firstBatch);
+
+      act(() => {
+        result.current.processFiles(fileList1);
+      });
+
+      expect(result.current.files).toHaveLength(2);
+
+      // Intentar agregar uno más
+      const secondBatch = [createMockFile('file3.jpg', 1024, 'image/jpeg')];
+      const fileList2 = createMockFileList(secondBatch);
+
+      act(() => {
+        result.current.processFiles(fileList2);
+      });
+
+      expect(result.current.files).toHaveLength(2); // No debe agregar más
+      expect(result.current.errorMessage).toContain('Máximo 2 archivos permitidos');
+      expect(onError).toHaveBeenCalled();
+    });
+
+    it('debe reemplazar archivo cuando multiple=false', () => {
+      const { result } = renderHook(() =>
+        useFileUpload({ multiple: false })
+      );
+
+      // Primera carga
+      const file1 = createMockFile('file1.jpg', 1024, 'image/jpeg');
+      const fileList1 = createMockFileList([file1]);
+
+      act(() => {
+        result.current.processFiles(fileList1);
+      });
+
+      expect(result.current.files).toHaveLength(1);
+      expect(result.current.files[0].name).toBe('file1.jpg');
+
+      // Segunda carga (debe reemplazar)
+      const file2 = createMockFile('file2.jpg', 1024, 'image/jpeg');
+      const fileList2 = createMockFileList([file2]);
+
+      act(() => {
+        result.current.processFiles(fileList2);
+      });
+
+      expect(result.current.files).toHaveLength(1);
+      expect(result.current.files[0].name).toBe('file2.jpg');
     });
   });
 
