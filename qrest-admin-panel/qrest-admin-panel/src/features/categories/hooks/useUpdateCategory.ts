@@ -13,7 +13,7 @@ export const useUpdateCategory = () => {
 
         try {
             setLoading(true);
-            await categoryService.Updatecategory(id, data);
+            await categoryService.updateCategory(id, data);
             setUpdated(true);
         } catch (err: any) {
             const backendMessage =

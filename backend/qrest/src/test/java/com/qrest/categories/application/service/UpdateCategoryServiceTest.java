@@ -22,7 +22,6 @@ import static org.mockito.Mockito.*;
  * @author QRest Team
  * @version 1.0
  */
-
 @ExtendWith(MockitoExtension.class)
 public class UpdateCategoryServiceTest {
 
@@ -33,22 +32,22 @@ public class UpdateCategoryServiceTest {
     private UpdateCategoryService updateCategoryService;
 
     @Test
-    void updateCategory_WhenValidData_ShouldUpdateSuccessFully() {
+    void updateCategory_WhenValidData_ShouldUpdateSuccessfully() {
         // Given
-        Long categoryId= 1L;
+        Long categoryId = 1L;
         Category existingCategory = Category.reconstitute(categoryId, "Bebidas", true);
-        Category updateCAtegory = Category.reconstitute(categoryId, "Tragos", true);
 
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(existingCategory));
         when(categoryRepository.existsByName("Tragos")).thenReturn(false);
         when(categoryRepository.save(any(Category.class))).thenReturn(existingCategory);
 
-        // when
-        Category result = updateCategoryService.updateCategory(categoryId, "Tragos");
+        // When
+        Category result = updateCategoryService.updateCategory(categoryId, "Tragos", true);
 
-        // then
+        // Then
         assertNotNull(result);
         assertEquals("Tragos", result.getName());
+        assertTrue(result.isActive());
         verify(categoryRepository).findById(categoryId);
         verify(categoryRepository).existsByName("Tragos");
         verify(categoryRepository).save(any(Category.class));
@@ -56,12 +55,14 @@ public class UpdateCategoryServiceTest {
 
     @Test
     void updateCategory_WhenCategoryNotFound_ShouldThrowException() {
+        // Given
         Long categoryId = 999L;
 
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.empty());
 
+        // When & Then
         assertThrows(CategoryNotFoundException.class,
-                ()-> updateCategoryService.updateCategory(categoryId, "NuevoNombre"));
+                () -> updateCategoryService.updateCategory(categoryId, "NuevoNombre", true));
 
         verify(categoryRepository).findById(categoryId);
         verify(categoryRepository, never()).save(any());
@@ -69,15 +70,16 @@ public class UpdateCategoryServiceTest {
 
     @Test
     void updateCategory_WhenDuplicateName_ShouldThrowException() {
+        // Given
         Long categoryId = 1L;
-
         Category existingCategory = Category.reconstitute(categoryId, "Bebidas", true);
 
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(existingCategory));
         when(categoryRepository.existsByName("Postres")).thenReturn(true);
 
+        // When & Then
         assertThrows(DuplicateCategoryNameException.class,
-                ()-> updateCategoryService.updateCategory(categoryId, "Postres"));
+                () -> updateCategoryService.updateCategory(categoryId, "Postres", true));
 
         verify(categoryRepository).findById(categoryId);
         verify(categoryRepository).existsByName("Postres");
@@ -86,17 +88,77 @@ public class UpdateCategoryServiceTest {
 
     @Test
     void updateCategory_WhenSameName_ShouldNotCheckDuplicate() {
-        long categoryId = 1L;
+        // Given
+        Long categoryId = 1L;
         Category existingCategory = Category.reconstitute(categoryId, "Bebidas", true);
 
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(existingCategory));
         when(categoryRepository.save(any(Category.class))).thenReturn(existingCategory);
 
-        Category result = updateCategoryService.updateCategory(categoryId, "Bebidas");
+        // When
+        Category result = updateCategoryService.updateCategory(categoryId, "Bebidas", true);
 
+        // Then
         assertNotNull(result);
         verify(categoryRepository).findById(categoryId);
         verify(categoryRepository, never()).existsByName(anyString());
+        verify(categoryRepository).save(any(Category.class));
+    }
+
+    @Test
+    void updateCategory_WhenActivatingCategory_ShouldSetActiveTrue() {
+        // Given
+        Long categoryId = 1L;
+        Category existingCategory = Category.reconstitute(categoryId, "Bebidas", false);
+
+        when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(existingCategory));
+        when(categoryRepository.save(any(Category.class))).thenReturn(existingCategory);
+
+        // When
+        Category result = updateCategoryService.updateCategory(categoryId, "Bebidas", true);
+
+        // Then
+        assertNotNull(result);
+        assertTrue(result.isActive());
+        verify(categoryRepository).findById(categoryId);
+        verify(categoryRepository).save(any(Category.class));
+    }
+
+    @Test
+    void updateCategory_WhenDeactivatingCategory_ShouldSetActiveFalse() {
+        // Given
+        Long categoryId = 1L;
+        Category existingCategory = Category.reconstitute(categoryId, "Bebidas", true);
+
+        when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(existingCategory));
+        when(categoryRepository.save(any(Category.class))).thenReturn(existingCategory);
+
+        // When
+        Category result = updateCategoryService.updateCategory(categoryId, "Bebidas", false);
+
+        // Then
+        assertNotNull(result);
+        assertFalse(result.isActive());
+        verify(categoryRepository).findById(categoryId);
+        verify(categoryRepository).save(any(Category.class));
+    }
+
+    @Test
+    void updateCategory_WhenActiveIsNull_ShouldNotChangeActiveState() {
+        // Given
+        Long categoryId = 1L;
+        Category existingCategory = Category.reconstitute(categoryId, "Bebidas", true);
+
+        when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(existingCategory));
+        when(categoryRepository.save(any(Category.class))).thenReturn(existingCategory);
+
+        // When
+        Category result = updateCategoryService.updateCategory(categoryId, "Tragos", null);
+
+        // Then
+        assertNotNull(result);
+        assertTrue(result.isActive()); // Mantiene el estado original
+        verify(categoryRepository).findById(categoryId);
         verify(categoryRepository).save(any(Category.class));
     }
 }

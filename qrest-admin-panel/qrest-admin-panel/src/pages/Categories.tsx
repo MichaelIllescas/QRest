@@ -71,7 +71,8 @@ const Categories: React.FC = () => {
               onClick={() => {
                 setFormRegisterOpen(!formRegisterOpen);
                 setError(null);
-                if (formRegisterOpen) {
+                if (formRegisterOpen || categoryToEdit) {
+                  handleCloseAllForms();
                   listCategory();
                 }
               }}
@@ -131,7 +132,7 @@ const Categories: React.FC = () => {
           )}
 
           {/* Mostrar tabla siempre que no esté el formulario abierto */}
-          {!formRegisterOpen && !loading && (
+          {!formRegisterOpen && ! categoryToEdit && !loading && (
             <Table<Category>
               columns={columns}
               data={categories}
@@ -164,13 +165,17 @@ const Categories: React.FC = () => {
           {formRegisterOpen && <RegisterCategoryForm />}
 
           {/* 👇 Mostrar formulario de edición */}
-          {categoryToEdit !== null && (
+          {categoryToEdit && (
             <EditCategoryForm
               category={categoryToEdit}
               onSuccess={() => {
                 handleCloseAllForms();
                 listCategory();
                 setUpdateSuccessMessage("La categoría ha sido actualizada correctamente.");
+
+                setTimeout(() => {
+                  setUpdateSuccessMessage(null);
+                }, 3000);
               }}
               onCancel={handleCloseAllForms}
             />
