@@ -91,7 +91,9 @@
 }
 
 .lightboxImage {
-  width: 100%;
+  max-width: 90vw;
+  max-height: 80vh;
+  width: auto;
   height: auto;
   border-radius: 12px;
 }
