@@ -4,7 +4,11 @@ import { useListCategory } from "../../categories/hooks/useListCategory";
 import { useRegisterProduct } from "../hooks/useRegisterProduct";
 import styles from "../styles/RegisterProductForm.module.css";
 
-const RegisterProductForm = () => {
+interface RegisterProductFormProps {
+  onProductRegistered?: () => void;
+}
+
+const RegisterProductForm = ({ onProductRegistered }: RegisterProductFormProps) => {
   const {
     product,
     files,
@@ -21,7 +25,7 @@ const RegisterProductForm = () => {
     handleChange,
     handleBlur,
     handleSubmit,
-  } = useRegisterProduct();
+  } = useRegisterProduct(onProductRegistered);
   const { categories, listCategory } = useListCategory();
   
 

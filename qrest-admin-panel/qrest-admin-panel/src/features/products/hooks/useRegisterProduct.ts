@@ -12,7 +12,7 @@ interface ValidationErrors {
   image?: string;
 }
 
-export const useRegisterProduct = () => {
+export const useRegisterProduct = (onProductRegistered?: () => void) => {
   const [files, setFiles] = useState<File[]>([]);
   const [withImage, setWithImage] = useState(false);
   const [product, setProduct] = useState<Product>({
@@ -192,6 +192,12 @@ export const useRegisterProduct = () => {
       await productService.create(finalProduct);
 
       setSaved(true);
+      
+      // Actualizar la tabla de productos
+      if (onProductRegistered) {
+        onProductRegistered();
+      }
+      
       // Limpiar formulario después de guardar exitosamente
       setProduct({
         name: "",

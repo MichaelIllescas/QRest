@@ -6,10 +6,13 @@ import type { TableColumn } from "../shared/components/Table/table.types";
 import RegisterProductForm from "../features/products/components/RegisterProductForm";
 import type { Product } from "../features/products/types/product";
 import { useListProducts } from "../features/products/hooks/useListProducts";
+import { ImagePreview } from "../shared/components/ImagePreview/ImagePreview";
 
 const Products: React.FC = () => {
   const [formRegisterOpen, setFormRegisterOpen] = useState(false);
   const { products, isLoading, error, fetchProducts } = useListProducts();
+  const  BASE_URL = import.meta.env.VITE_API_URL;
+  console.log("Base URL:", BASE_URL);
 
   const columns: TableColumn<Product>[] = [
     { key: "id", label: "ID" },
@@ -22,7 +25,7 @@ const Products: React.FC = () => {
       render: (value: boolean) => (value ? "Sí" : "No"),
     },
     { key: "categoryName", label: "Categoría" },
-    { key: "imageUrl", label: "Imagen" },
+    { key: "imageUrl", label: "Imagen" , render : (value: string) => (value==null ? <ImagePreview imageUrl={null} size="small" /> : <ImagePreview imageUrl={`${BASE_URL}${value}`} size="small" />)},
   ];
 
 
@@ -81,7 +84,7 @@ const Products: React.FC = () => {
                 )}
               ></Table>
             ))}
-          {formRegisterOpen && <RegisterProductForm  />}
+          {formRegisterOpen && <RegisterProductForm onProductRegistered={fetchProducts} />}
         </div>
       </div>
     </Container>
