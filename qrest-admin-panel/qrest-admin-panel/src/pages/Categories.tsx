@@ -10,11 +10,13 @@ import { AlertModal } from "../shared/components/Alert/AlertModal";
 import { useDeleteCategory } from "../features/categories/hooks/useDeleteCategory";
 import { Alert } from "../shared/components/Alert/Alert";
 import EditCategoryForm from "../features/categories/components/EditCategoryForm";
+import { ActionButton, ActionButtons } from "../shared/components/ActionButton";
+import { Pencil, Trash2 } from 'lucide-react';
+
 const Categories: React.FC = () => {
   const [formRegisterOpen, setFormRegisterOpen] = useState(false);
   const [categoryToEdit, setCategoryToEdit] = useState<Category | null>(null);
   const [categoryToDelete, setCategoryToDelete] = useState<number | null>(null);
-
   const [updateSuccessMessage, setUpdateSuccessMessage] = useState<string | null>(null);
   
   const { categories, loading, error, setError, listCategory } = useListCategory();
@@ -35,15 +37,9 @@ const Categories: React.FC = () => {
       render: (value) => (value ? "Sí" : "No"),
     },
   ];
-  const mockCategories: Category[] = [
-    { id: 1, name: "Entrantes",  active: true },
-    { id: 2, name: "Platos Principales", active: true },
-    { id: 3, name: "Postres", active: false },
-  ];
 
   useEffect(() => {
     listCategory();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleCloseAllForms = () => {
@@ -54,7 +50,6 @@ const Categories: React.FC = () => {
 
   return (
     <Container size="xl" className="py-6">
-      {/* Sección de título estandarizada */}
       <div className="page-header">
         <h1 className="page-title">Categorías</h1>
         <p className="page-description">
@@ -62,33 +57,30 @@ const Categories: React.FC = () => {
         </p>
       </div>
 
-      {/* Área de contenido estandarizada */}
       <div className="page-content">
         <div>
           <div className="container-button-manager">
             <button
               className="btn btn-primary mb-4"
               onClick={() => {
-                setFormRegisterOpen(!formRegisterOpen);
-                setError(null);
                 if (formRegisterOpen || categoryToEdit) {
                   handleCloseAllForms();
                   listCategory();
+                } else {
+                  setFormRegisterOpen(true);
                 }
               }}
             >
-              {formRegisterOpen ? "Ver Listado" : "Registrar Nueva Categoría"}
+              {formRegisterOpen || categoryToEdit ? "Ver Listado" : "Registrar Nueva Categoría"}
             </button>
           </div>
 
-          {/* Mostrar error de listado */}
           {error && (
             <div className="error-message">
               <strong>Error:</strong> {error.message}
             </div>
           )}
 
-          {/* Mostrar error de eliminación */}
           {deleteError && (
             <Alert
               variant="error"
@@ -100,7 +92,6 @@ const Categories: React.FC = () => {
             </Alert>
           )}
 
-          {/* Mostrar éxito de eliminación */}
           {deleted && (
             <Alert
               variant="success"
@@ -112,8 +103,7 @@ const Categories: React.FC = () => {
             </Alert>
           )}
 
-           {/* 👇 NUEVO: Mostrar éxito de actualización */}
-           {updateSuccessMessage && (
+          {updateSuccessMessage && (
             <Alert
               variant="success" 
               title="Categoría Actualizada"
@@ -124,15 +114,13 @@ const Categories: React.FC = () => {
             </Alert>
           )}
 
-          {/* Mostrar loading */}
           {loading && (
             <div className="loading-message">
               <p>Cargando categorías...</p>
             </div>
           )}
 
-          {/* Mostrar tabla siempre que no esté el formulario abierto */}
-          {!formRegisterOpen && ! categoryToEdit && !loading && (
+          {!formRegisterOpen && !categoryToEdit && !loading && (
             <Table<Category>
               columns={columns}
               data={categories}
@@ -141,30 +129,28 @@ const Categories: React.FC = () => {
               itemsPerPage={4}
               title="Listado de Categorías"
               actions={(row: Category) => (
-                <>
-                {/* 👇 BOTÓN DE EDITAR FUNCIONAL */}
-                  <button className="btn btn-secondary"
-                  onClick={() => {
-                    setCategoryToEdit(row);
-                    setFormRegisterOpen(false);
-                  }}
-                  >
-                    📝
-                    </button>
-                  <button
-                    className="btn btn-danger"
+                <ActionButtons align="center">
+                  <ActionButton
+                    variant="edit"
+                    icon={<Pencil />}
+                    onClick={() => {
+                      setCategoryToEdit(row);
+                      setFormRegisterOpen(false);
+                    }}
+                  />
+                  <ActionButton
+                    variant="delete"
+                    icon={<Trash2 />}
                     onClick={() => setCategoryToDelete(row.id!)}
                     disabled={deleteLoading}
-                  >
-                    🗑️
-                  </button>
-                </>
+                  />
+                </ActionButtons>
               )}
-            ></Table>
+            />
           )}
+
           {formRegisterOpen && <RegisterCategoryForm />}
 
-          {/* 👇 Mostrar formulario de edición */}
           {categoryToEdit && (
             <EditCategoryForm
               category={categoryToEdit}
@@ -172,7 +158,6 @@ const Categories: React.FC = () => {
                 handleCloseAllForms();
                 listCategory();
                 setUpdateSuccessMessage("La categoría ha sido actualizada correctamente.");
-
                 setTimeout(() => {
                   setUpdateSuccessMessage(null);
                 }, 3000);
@@ -180,7 +165,6 @@ const Categories: React.FC = () => {
               onCancel={handleCloseAllForms}
             />
           )}
-
         </div>
       </div>
 
